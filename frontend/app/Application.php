@@ -47,6 +47,11 @@ class Application
     {
         // MainController
         $this->router->map('GET', '/', 'MainController#home', 'home');
+        $this->router->map('GET', '/connexion', 'MainController#signIn', 'signIn');
+        $this->router->map('GET', '/inscription', 'MainController#register', 'register');
+        $this->router->map('GET', '/mon-compte', 'MainController#account', 'account');
+        // QuizController
         $this->router->map('GET', '/quiz/[i:id]', 'QuizController#quiz', 'quiz');
+        
     }
 }

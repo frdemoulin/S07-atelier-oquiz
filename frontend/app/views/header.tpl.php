@@ -25,3 +25,4 @@
     </head>
     <body>
         <main class="container" data-uri="<?= $_SERVER['BASE_URI'];?>">
+        <?php $this->includeOne('nav'); ?>

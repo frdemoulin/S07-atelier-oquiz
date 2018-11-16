@@ -9,14 +9,12 @@ class QuizController extends CoreController
 
         $this->oTemplator->setVar('quizId',$params['id']);
 
-        if(empty($this->userId)) 
+        if(empty($_SESSION['userId'])) 
         {
-            dump('visitor');
             $this->show('visitorQuiz');
         }
         else 
         {
-            dump('user');
             $this->show('userQuiz');
         }
     }

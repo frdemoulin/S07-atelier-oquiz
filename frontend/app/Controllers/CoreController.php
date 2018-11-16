@@ -7,14 +7,11 @@ abstract class CoreController
 {
     // contient l'instance du templator
     protected $oTemplator;
-    protected $userId = '';
 
     public function __construct($router)
     {
-        if (!empty($_SESSION['userId'])) 
-        {
-            $this->userId = $_SESSION['userId'];
-        }
+        // session_start();
+        // $_SESSION['userId'] = 21;
         // j'envoi le router + le chemin absolu vers views en instanciant templator
         $this->oTemplator = new Templator(__DIR__.'/../views', $router);
     }

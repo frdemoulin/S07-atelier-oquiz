@@ -1,0 +1,1 @@
+<h1>Mon compte <?=$_SESSION['userId'];?></h1>
