@@ -52,6 +52,7 @@ class Application
         $this->router->map('GET', '/mon-compte', 'MainController#account', 'account');
         // QuizController
         $this->router->map('GET', '/quiz/[i:id]', 'QuizController#quiz', 'quiz');
+        $this->router->map('GET', '/quiz-by-tag/[i:id]', 'QuizController#byTag', 'byTag');
         
     }
 }

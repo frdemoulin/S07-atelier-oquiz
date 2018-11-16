@@ -1,0 +1,1 @@
+<h1>Liste des quiz dont le tag à l'id <?=$this->var['tagId'] ?></h1>
