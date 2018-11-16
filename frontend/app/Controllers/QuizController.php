@@ -11,10 +11,12 @@ class QuizController extends CoreController
 
         if(empty($_SESSION['userId'])) 
         {
+             $this->oTemplator->setVar('js','visitorQuiz');
             $this->show('visitorQuiz');
         }
         else 
         {
+            $this->oTemplator->setVar('js','userQuiz');
             $this->show('userQuiz');
         }
     }
