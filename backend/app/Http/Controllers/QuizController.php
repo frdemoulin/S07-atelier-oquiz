@@ -10,6 +10,7 @@ use App\Quizzes;
 use App\Tags;
 use App\AppUsers;
 use App\QuizzesHasTags;
+use App\Questions;
 
 /*
  Pour utiliser / recuperer l'objet Request, on doit obligatoirement importer cette classe Lumen
@@ -66,11 +67,11 @@ class QuizController extends Controller
         //$quizInfo = Quizzes::select("SELECT * FROM quizzes");
         //$quizInfo = Quizzes::where('id', '=', $id);
         $quizId = $request->input('id', $quizInfo->id);
-        dump($quizId);
+        // dump($quizId);
         $quizTitle = $request->input('title', $quizInfo->title);
-        dump($quizTitle);
+        // dump($quizTitle);
         $quizDescription = $request->input('description', $quizInfo->description);
-        dump($quizDescription);
+        // dump($quizDescription);
 
         //dump($quizInfo);
 
@@ -81,43 +82,54 @@ class QuizController extends Controller
         WHERE quizzes.id = '.$id
         );
 
-        $quizAuthorFirstname = $request->input('firstname', $authorInfo->description);
+        //dump($authorInfo);
+        $quizAuthorFirstname = $authorInfo[0]->firstname;
+        $quizAuthorLastname = $authorInfo[0]->lastname;
 
-        dump($authorInfo);
-        // //dump($quizzesList);
+        $arrayQuiz = [
+            0 => [
+            'id' => $quizId,
+            'title' => $quizTitle,
+            'description' => $quizDescription,
+            'firstname' => $quizAuthorFirstname,
+            'lastname' => $quizAuthorLastname
+            ]
+        ];
+        //dump($arrayQuiz);
 
-        // foreach ($quizzesList as $key => $quiz):
+        $questionsInfo = DB::select('SELECT question, anecdote
+        FROM questions
+        WHERE quizzes_id = '.$id
+        );
+        
+        //dump($questionsInfo);
 
-        //     $quizId = $request->input('id', $quiz->id);
-        //     $quizTitle = $request->input('title', $quiz->title);
-        //     $quizDescription = $request->input('description', $quiz->description);
-        //     $quizAppUsersId = $request->input('app_users_id', $quiz->app_users_id);
-        //     $authorFirstname = $authorList[$key]->firstname;
-        //     $authorLastname = $authorList[$key]->lastname;
+        foreach ($questionsInfo as $key => $value):
 
-        //     $tagsList = DB::select('SELECT name
-        //     FROM tags
-        //     INNER JOIN quizzes_has_tags
-        //     ON quizzes_has_tags.tags_id = tags.id
-        //     WHERE quizzes_has_tags.quizzes_id ='.$quizId.'
-        //     ORDER BY quizzes_has_tags.quizzes_id ASC
-        //     ');
+            $quizQuestion = $request->input('question', $value->question);
+            $quizAnecdote = $request->input('anecdote', $value->anecdote);
 
-        //     //dump($tagsList);
+            $levelInfo = DB::select('SELECT name
+            FROM level
+            INNER JOIN quizzes_has_tags
+            ON quizzes_has_tags.tags_id = tags.id
+            WHERE quizzes_has_tags.quizzes_id ='.$quizId.'
+            ORDER BY quizzes_has_tags.quizzes_id ASC
+            ');
 
-        //     $currentQuiz = [
-        //         'id' => $quizId,
-        //         'title' => $quizTitle,
-        //         'description' => $quizDescription,
-        //         'firstname' => $authorFirstname,
-        //         'lastname' => $authorLastname,
-        //         'tags' => $tagsList
-        //     ];
+            $currentQuestionInfo = [
+                //$key => [
+                    'question' => $quizQuestion,
+                    'anecdote' => $quizAnecdote
+                //]
+            ];
 
-        //     array_push($arrayQuizzes, $currentQuiz);
-        // endforeach;
+            array_push($arrayQuiz, $currentQuestionInfo);
+        endforeach;
 
-        //dump($arrayQuizzes);
+        dump($arrayQuiz);
+
+        
 
         // return response()->json($arrayQuizzes);
         // array_json =  [
