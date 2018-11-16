@@ -11,6 +11,8 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
+// route en get associée à la page home
+$router->get('/', [
+    'as' => 'home', // clef = as => valeur = url
+    'uses' => 'MainController@displayHome' // le code qui doit être exécuté et qui se situe dans MainController@laMethode à appeler. C'est Lumen qui se charge de découper MainController@laMethode sur le arobase (# avec AltoRouter)
+]);

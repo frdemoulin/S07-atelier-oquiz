@@ -1,4 +1,4 @@
-/vendor
+/backend/vendor
 /.idea
 Homestead.json
 Homestead.yaml
