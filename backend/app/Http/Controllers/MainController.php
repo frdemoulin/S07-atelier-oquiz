@@ -32,30 +32,8 @@ class MainController extends Controller
     // méthode associée à la route /
     public function displayHome(Request $request)
     {
-        //la methode select ne fait que lire des données , en revanche il existe d'autre methode pour effectuer d'autres actions du type insert, delete etc...
-        //$videoGameList = DB::select("SELECT * FROM videogame"); 
-        
-        /*
-         Grace au model que j'ai créé à la racine du dossier app, je peux desormais m'epargner une requete direct et assez commune : retourner tout les objet de tel ou tel table.
-
-         Pour que cela fonctionne je dois appeler en amont de mon controller mon model sur lequel je souhaite retourner un ou plusieurs elements et effectuer un appel (dans le cas je je veux retourner tout les element) un ::al() qui effectuera le meme genre de requete fait precedemment avec DB::select
-        */
-        // https://laravel.com/docs/5.7/queries
-        // version détaillée : $videoGameList = DB::select("SELECT * FROM videogame");
-        // Quizzes correspond au nom de la classe
-        //$quizzesList = Quizzes::where('id', 1)->first();
-
         $arrayQuizzes = [];
-        
         $quizzesList = Quizzes::all();
-
-        // $sqlAuthor = '
-        //     SELECT firstname, lastname
-        //     FROM app_users
-        //     INNER JOIN quizzes
-        //     ON app_users.id = quizzes.app_users_id 
-        //     WHERE quizzes.app_users_id = :id
-        // ';
 
         $authorList = DB::select("SELECT firstname, lastname
         FROM app_users
@@ -76,12 +54,23 @@ class MainController extends Controller
             $authorFirstname = $authorList[$key]->firstname;
             $authorLastname = $authorList[$key]->lastname;
 
+            $tagsList = DB::select('SELECT name
+            FROM tags
+            INNER JOIN quizzes_has_tags
+            ON quizzes_has_tags.tags_id = tags.id
+            WHERE quizzes_has_tags.quizzes_id ='.$quizId.'
+            ORDER BY quizzes_has_tags.quizzes_id ASC
+            ');
+
+            //dump($tagsList);
+
             $currentQuiz = [
                 'id' => $quizId,
                 'title' => $quizTitle,
                 'description' => $quizDescription,
                 'firstname' => $authorFirstname,
-                'lastname' => $authorLastname
+                'lastname' => $authorLastname,
+                'tags' => $tagsList
             ];
 
             array_push($arrayQuizzes, $currentQuiz);
