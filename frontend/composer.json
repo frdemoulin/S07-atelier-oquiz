@@ -1,0 +1,11 @@
+{
+    "require": {
+        "symfony/var-dumper": "^3.4",
+        "altorouter/altorouter": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "oQuiz\\": "app/"
+        }
+    }
+}
