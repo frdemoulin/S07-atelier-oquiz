@@ -54,7 +54,7 @@ class MainController extends Controller
             $authorFirstname = $authorList[$key]->firstname;
             $authorLastname = $authorList[$key]->lastname;
 
-            $tagsList = DB::select('SELECT name
+            $tagsList = DB::select('SELECT tags.id, name
             FROM tags
             INNER JOIN quizzes_has_tags
             ON quizzes_has_tags.tags_id = tags.id

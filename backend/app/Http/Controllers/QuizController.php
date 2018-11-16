@@ -32,19 +32,58 @@ class QuizController extends Controller
     // méthode associée à la route /
     public function quiz(Request $request, $id)
     {
+
+        // array_json =  [
+        //     [] => [
+        //          'id' => '',
+        //          'name' => '',
+        //          'description' => ''
+        //          'tags' => [
+        //                      '0' => '',
+        //                      '1' => '',
+        //                      ...
+        //                    ]
+        //          ],      
+        //     [] => [
+        //          'question' => '',
+        //          'anecdote' => '',
+        //          'level' => '',
+        //          'answer' => '',
+        //         ],
+        //     [] => [
+        //          'question' => '',
+        //          'anecdote' => '',
+        //          'level' => '',
+        //          'answer' => '',
+        //         ],
+        //         ...
+        // ]
+
         // on déclare le tableau à retourner en json
         $arrayQuiz = [];
-        $quizInfo = Quizzes::where('id', '=', $id);
-        dump($arrayQuiz);
+        // on sélectionne le quiz d'id passé en paramètre de l'url
+        $quizInfo = Quizzes::find($id);
+        //$quizInfo = Quizzes::select("SELECT * FROM quizzes");
+        //$quizInfo = Quizzes::where('id', '=', $id);
+        $quizId = $request->input('id', $quizInfo->id);
+        dump($quizId);
+        $quizTitle = $request->input('title', $quizInfo->title);
+        dump($quizTitle);
+        $quizDescription = $request->input('description', $quizInfo->description);
+        dump($quizDescription);
 
-        // $authorList = DB::select("SELECT firstname, lastname
-        // FROM app_users
-        // INNER JOIN quizzes
-        // ON app_users.id = quizzes.app_users_id
-        // ORDER BY quizzes.id ASC
-        // ");
+        //dump($quizInfo);
 
-        // //dump($authorList);
+        $authorInfo = DB::select('SELECT firstname, lastname
+        FROM app_users
+        INNER JOIN quizzes
+        ON app_users.id = quizzes.app_users_id
+        WHERE quizzes.id = '.$id
+        );
+
+        $quizAuthorFirstname = $request->input('firstname', $authorInfo->description);
+
+        dump($authorInfo);
         // //dump($quizzesList);
 
         // foreach ($quizzesList as $key => $quiz):
