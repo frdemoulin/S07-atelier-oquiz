@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  Il existe deja un model dédiés aux utilisateurs qui peux nous servir d'exemple
 */
 
-Class Level extends Model {
+Class Answers extends Model {
 
     /*
      Pour que je sache a quelle table ma class Model doit faire reference je peux lui indiquer

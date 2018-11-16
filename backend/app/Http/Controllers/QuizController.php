@@ -97,7 +97,7 @@ class QuizController extends Controller
         ];
         //dump($arrayQuiz);
 
-        $questionsInfo = DB::select('SELECT question, anecdote
+        $questionsInfo = DB::select('SELECT id, question, anecdote, levels_id
         FROM questions
         WHERE quizzes_id = '.$id
         );
@@ -107,27 +107,41 @@ class QuizController extends Controller
         foreach ($questionsInfo as $key => $value):
 
             $quizQuestion = $request->input('question', $value->question);
+            $questionId = $request->input('id', $value->id);
             $quizAnecdote = $request->input('anecdote', $value->anecdote);
+            $quizLevelId = $request->input('levels_id', $value->levels_id);
 
-            $levelInfo = DB::select('SELECT name
-            FROM level
-            INNER JOIN quizzes_has_tags
-            ON quizzes_has_tags.tags_id = tags.id
-            WHERE quizzes_has_tags.quizzes_id ='.$quizId.'
-            ORDER BY quizzes_has_tags.quizzes_id ASC
-            ');
+            // table levels
+            $levelInfo = DB::select('SELECT `name`
+            FROM `levels`
+            WHERE id ='.$quizLevelId
+            );
+
+            $levelName = $levelInfo[0]->name;
+            //dump($levelInfo);
+
+            // table answers
+            $answerInfo = DB::select('SELECT `description`
+            FROM `answers`
+            WHERE questions_id ='.$questionId
+            );
+            
+            $answerDescription = $answerInfo[0]->description;
+            //dump($levelName);
 
             $currentQuestionInfo = [
                 //$key => [
                     'question' => $quizQuestion,
-                    'anecdote' => $quizAnecdote
+                    'anecdote' => $quizAnecdote,
+                    'level' => $levelName,
+                    'answer' => $answerDescription
                 //]
             ];
 
             array_push($arrayQuiz, $currentQuestionInfo);
         endforeach;
 
-        dump($arrayQuiz);
+        //dump($arrayQuiz);
 
         
 
@@ -149,6 +163,6 @@ class QuizController extends Controller
 
         //dump($arrayQuizzes);
 
-        //return response()->json($arrayQuizzes);
+        return response()->json($arrayQuiz);
     }
 }
