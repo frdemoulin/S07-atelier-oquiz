@@ -18,4 +18,9 @@ class QuizController extends CoreController
             $this->show('userQuiz');
         }
     }
+
+    public function byTag($params) {
+        $this->oTemplator->setVar('tagId',$params['id']);
+        $this->show('quizByTag');
+    }
 }

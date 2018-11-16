@@ -8,10 +8,10 @@
 
 <div class="row lists">
 
-    <div class="col-sm-4 d-none list">
+    <div class="col-sm-4 d-none">
         <h3 class="text-blue"> <a href="">Titre 1</a></h3>
         <h5>Tag</h5>
-        <h6>Sous-titre</h6>
+        <h6>Description</h6>
         <p>by author name</p>
     </div>
 
