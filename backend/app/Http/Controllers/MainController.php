@@ -32,13 +32,6 @@ class MainController extends Controller
     // méthode associée à la route /
     public function displayHome(Request $request)
     {
-        /*
-         Pour effectuer une requete raw classique il faut que j'utilise l'objet DB.
-         Je dois donc faire un use Illuminate\Support\Facades\DB.
-
-         Puis a partir de l'objet DB appeler la methode select afin d'effectuer ma requete directement dedans
-        */
-
         //la methode select ne fait que lire des données , en revanche il existe d'autre methode pour effectuer d'autres actions du type insert, delete etc...
         //$videoGameList = DB::select("SELECT * FROM videogame"); 
         
@@ -52,11 +45,40 @@ class MainController extends Controller
         // Quizzes correspond au nom de la classe
         //$quizzesList = Quizzes::where('id', 1)->first();
         
-        $quizzesList = Quizzes::where('id', 1)->first();
-        $quizId = $request->input('id', $quizzesList->id);
-        $quizTitle = $request->input('title', $quizzesList->title);
-        $quizDescription = $request->input('description', $quizzesList->description);
-        $quizAppUsersId = $request->input('app_users_id', $quizzesList->app_users_id);
+
+        $arrayQuizzes = [];
+        $quizzesList = Quizzes::all();
+        foreach ($quizzesList as $quiz):
+            $quizId = $request->input('id', $quiz->id);
+            $quizTitle = $request->input('title', $quiz->title);
+            $quizDescription = $request->input('description', $quiz->description);
+            $quizAppUsersId = $request->input('app_users_id', $quiz->app_users_id);
+
+            $currentQuiz = [
+                'id' => $quizId,
+                'title' => $quizTitle,
+                'description' => $quizDescription,
+                'app_users_id' => $quizAppUsersId
+            ];
+
+            array_push($arrayQuizzes, $currentQuiz);
+        endforeach;
+        //dump($arrayQuizzes);
+
+        // $tagsList = Tags::all();
+        // dump($tagsList);
+        // foreach ($tagsList as $tag):
+        //     $name = $request->input('name', $tag->name);
+        //     echo $name;
+        // endforeach;
+
+
+
+        // $quizzesList = Quizzes::where('id', 1)->first();
+        // $quizId = $request->input('id', $quizzesList->id);
+        // $quizTitle = $request->input('title', $quizzesList->title);
+        // $quizDescription = $request->input('description', $quizzesList->description);
+        // $quizAppUsersId = $request->input('app_users_id', $quizzesList->app_users_id);
 
         //$array[];
 
@@ -95,12 +117,7 @@ class MainController extends Controller
         // pour récupérer une donnée passée en paramètre, il faut utiliser la méthode input de l'objet Request
         // $order = $request->input('order');
 
-        return response()->json([
-            'id' => $quizId,
-            'title' => $quizTitle,
-            'description' => $quizDescription,
-            'app_users_id' => $quizAppUsersId
-        ]);
+        return response()->json($arrayQuizzes);
 
         // pour récupérer une donnée passée en paramètre, il faut utiliser la méthode input de l'objet Request
         //$order = $request->input('order');
