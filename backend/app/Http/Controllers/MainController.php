@@ -44,88 +44,51 @@ class MainController extends Controller
         // version détaillée : $videoGameList = DB::select("SELECT * FROM videogame");
         // Quizzes correspond au nom de la classe
         //$quizzesList = Quizzes::where('id', 1)->first();
-        
 
         $arrayQuizzes = [];
+        
         $quizzesList = Quizzes::all();
-        foreach ($quizzesList as $quiz):
+
+        // $sqlAuthor = '
+        //     SELECT firstname, lastname
+        //     FROM app_users
+        //     INNER JOIN quizzes
+        //     ON app_users.id = quizzes.app_users_id 
+        //     WHERE quizzes.app_users_id = :id
+        // ';
+
+        $authorList = DB::select("SELECT firstname, lastname
+        FROM app_users
+        INNER JOIN quizzes
+        ON app_users.id = quizzes.app_users_id
+        ORDER BY quizzes.id ASC
+        ");
+
+        //dump($authorList);
+        //dump($quizzesList);
+
+        foreach ($quizzesList as $key => $quiz):
+
             $quizId = $request->input('id', $quiz->id);
             $quizTitle = $request->input('title', $quiz->title);
             $quizDescription = $request->input('description', $quiz->description);
             $quizAppUsersId = $request->input('app_users_id', $quiz->app_users_id);
+            $authorFirstname = $authorList[$key]->firstname;
+            $authorLastname = $authorList[$key]->lastname;
 
             $currentQuiz = [
                 'id' => $quizId,
                 'title' => $quizTitle,
                 'description' => $quizDescription,
-                'app_users_id' => $quizAppUsersId
+                'firstname' => $authorFirstname,
+                'lastname' => $authorLastname
             ];
 
             array_push($arrayQuizzes, $currentQuiz);
         endforeach;
+
         //dump($arrayQuizzes);
 
-        // $tagsList = Tags::all();
-        // dump($tagsList);
-        // foreach ($tagsList as $tag):
-        //     $name = $request->input('name', $tag->name);
-        //     echo $name;
-        // endforeach;
-
-
-
-        // $quizzesList = Quizzes::where('id', 1)->first();
-        // $quizId = $request->input('id', $quizzesList->id);
-        // $quizTitle = $request->input('title', $quizzesList->title);
-        // $quizDescription = $request->input('description', $quizzesList->description);
-        // $quizAppUsersId = $request->input('app_users_id', $quizzesList->app_users_id);
-
-        //$array[];
-
-        // for ($id=1; $id <= 18; $id++) {
-        //     $quizzesList = Quizzes::where('id', $id)->first();
-        //     $quizId = $request->input('id', $quizzesList->id);
-        //     $quizTitle = $request->input('title', $quizzesList->title);
-        //     $quizDescription = $request->input('description', $quizzesList->description);
-        //     $quizAppUsersId = $request->input('app_users_id', $quizzesList->app_users_id);
-
-        //     array_push();
-
-        //     $array = response()->json([
-        //         'id' => $quizId,
-        //         'title' => $quizTitle,
-        //         'description' => $quizDescription,
-        //         'app_users_id' => $quizAppUsersId
-    
-        //     ]);
-        // }
-        
-        //dump($quizzesList);
-        
-        // $quizId = $request->input('id', $quizzesList->id);
-        // $quizTitle = $request->input('title', $quizzesList->title);
-        // $quizDescription = $request->input('description', $quizzesList->description);
-        // $quizAppUsersId = $request->input('app_users_id', $quizzesList->app_users_id);
-
-        //dump($quizTitle);
-
-        // $tagsList = Tags::all();
-        //dump($tagsList);
-
-        // dump($request);
-
-        // pour récupérer une donnée passée en paramètre, il faut utiliser la méthode input de l'objet Request
-        // $order = $request->input('order');
-
         return response()->json($arrayQuizzes);
-
-        // pour récupérer une donnée passée en paramètre, il faut utiliser la méthode input de l'objet Request
-        //$order = $request->input('order');
-        //dump($order);
-
-        //ce qui compte pour que la view puisse creer une variable exploitable c'est la clef associative associé a la variable a passer coté controller
-        // return view('home', [
-        //     'quizzesList' => $quizzesList
-        // ]);
     }
 }
