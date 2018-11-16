@@ -1,4 +1,3 @@
-<?php $this->includeOne('nav'); ?>
 
 <div class="row">
     <h2> Bienvenue sur O'Quiz </h2>
@@ -9,9 +8,10 @@
 
 <div class="row lists">
 
-    <div class="col-sm-4 list">
-        <h3 class="text-blue">Titre 1</h3>
-        <h5>Sous titre</h5>
+    <div class="col-sm-4 d-none list">
+        <h3 class="text-blue"> <a href="">Titre 1</a></h3>
+        <h5>Tag</h5>
+        <h6>Sous-titre</h6>
         <p>by author name</p>
     </div>
 
