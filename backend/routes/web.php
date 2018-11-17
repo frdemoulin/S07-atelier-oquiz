@@ -24,3 +24,10 @@ $router->get('/quiz/{id}', [
     'as' => 'quiz',
     'uses' => 'QuizController@quiz'
 ]);
+
+// route en get associée au endpoint /tags
+// affichage de tous les tags (sujets de quiz)
+$router->get('/tags', [
+    'as' => 'tags',
+    'uses' => 'QuizController@tags'
+]);

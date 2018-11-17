@@ -1,21 +1,18 @@
 <?php
 
-// on déclare le namespace
+// déclaration du namespace
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 
-//import de mon model pour effectuer des requetes
-use App\Quizzes;
-use App\Tags;
+// import des models pour effectuer des requêtes
 use App\AppUsers;
-use App\QuizzesHasTags;
 use App\Questions;
+use App\Quizzes;
+use App\QuizzesHasTags;
+use App\Tags;
 
-/*
- Pour utiliser / recuperer l'objet Request, on doit obligatoirement importer cette classe Lumen
-*/
-
+// import de la classe Request (objet Lumen)
 use Illuminate\Http\Request;
 
 class QuizController extends Controller
@@ -30,7 +27,13 @@ class QuizController extends Controller
         //
     }
 
-    // méthode associée à la route /
+    /**
+     * méthode associée au endpoint /
+     *
+     * @param Request $request
+     * @param string $id
+     * @return json
+     */
     public function quiz(Request $request, $id)
     {
 
@@ -61,11 +64,10 @@ class QuizController extends Controller
         // ]
 
         // on déclare le tableau à retourner en json
+        // il contiendra les infos d'un quiz d'id donné
         $arrayQuiz = [];
         // on sélectionne le quiz d'id passé en paramètre de l'url
         $quizInfo = Quizzes::find($id);
-        //$quizInfo = Quizzes::select("SELECT * FROM quizzes");
-        //$quizInfo = Quizzes::where('id', '=', $id);
         $quizId = $request->input('id', $quizInfo->id);
         // dump($quizId);
         $quizTitle = $request->input('title', $quizInfo->title);
@@ -164,5 +166,39 @@ class QuizController extends Controller
         //dump($arrayQuizzes);
 
         return response()->json($arrayQuiz);
+    }
+
+    /**
+     * méthode associée au endpoint /tags
+     *
+     * @return json
+     */
+    public function tags()
+    {
+
+        // array_json =  [
+        //     'id' => 'name',
+        //      ...
+        // ]
+        
+        // on déclare le tableau à retourner en json
+        // il contiendra tous les tags présents dans la table tags
+        $tagsAllQuizzes = [];
+        // on sélectionne les champs id et name dans la table tags
+        $tagsInfo = Tags::select('id', 'name')->get();
+        //dd($tagsInfo);
+        
+        // on pushe les infos des tags dans le tableau associatif $tagsAllQuizzes
+        // 'id' => 'name'
+        foreach ($tagsInfo as $currentTag) {
+            $currentTagId = $currentTag->id;
+            $currentTagName = $currentTag->name;
+            $tagsAllQuizzes[$currentTagId] = $currentTagName;
+        }
+
+        //dd($tagsAllQuizzes);
+
+        return response()->json($tagsAllQuizzes); 
+        
     }
 }
