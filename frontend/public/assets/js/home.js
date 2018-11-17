@@ -14,7 +14,6 @@ var appHome = {
     });
     // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
     jqxhr.done(function (response) {
-      console.log(response);
       for ( var index in response) {
         var divQuizz = appHome.constructQuiz(response[index]);
         $(divQuizz).appendTo('.lists');
@@ -29,7 +28,7 @@ var appHome = {
   constructQuiz: function(quiz) {
     // // je construit le l'url de redirection
      var urlQuiz = appHome.uri + '/quiz/' + quiz.id;
-    // // je clone la liste
+    // // je clone la première liste
     var list = $('.lists div:first-child').clone();
     $(list).removeClass('d-none');
     // // modification contenu du lien
@@ -38,7 +37,6 @@ var appHome = {
     // // contenu du h5
     var h5 = $(list).find('h5');
     $(h5).html('');
-    console.log(quiz.tags);
     for ( var index in quiz.tags)
     {
       var urlTag = appHome.uri + '/quiz-by-tag/' + quiz.tags[index].id;
