@@ -15,6 +15,10 @@ use App\Tags;
 // import de la classe Request (objet Lumen)
 use Illuminate\Http\Request;
 
+// import de la classe Collection (méthode collect())
+// https://laravel.com/docs/5.1/collections#available-methods
+// use Illuminate\Support\Collection;
+
 class QuizController extends Controller
 {
     /**
@@ -28,7 +32,8 @@ class QuizController extends Controller
     }
 
     /**
-     * méthode associée au endpoint /
+     * route en get associée au endpoint /quiz/[id]
+     * affichage du quiz d'id donné
      *
      * @param Request $request
      * @param string $id
@@ -184,7 +189,16 @@ class QuizController extends Controller
         // on déclare le tableau à retourner en json
         // il contiendra tous les tags présents dans la table tags
         $tagsAllQuizzes = [];
-        // on sélectionne les champs id et name dans la table tags
+        
+        /*
+         ********************************
+         * méthode à la mano avec foreach
+         ********************************
+
+        // on déclare le tableau à retourner en json
+        // il contiendra tous les tags présents dans la table tags
+        $tagsAllQuizzes = [];
+         // on sélectionne les champs id et name dans la table tags
         $tagsInfo = Tags::select('id', 'name')->get();
         //dd($tagsInfo);
         
@@ -195,10 +209,81 @@ class QuizController extends Controller
             $currentTagName = $currentTag->name;
             $tagsAllQuizzes[$currentTagId] = $currentTagName;
         }
+        
+        return response()->json($tagsAllQuizzes); 
+        */
+
+        // on sélectionne les champs id et name dans la table tags
+        // la méthode pluck() de Lumen renvoie un tableau associatif
+        // 'id' => 'name'
+        $tagsAllQuizzes = Tags::pluck('name', 'id');
+        //dd($tagsInfo);
 
         //dd($tagsAllQuizzes);
 
         return response()->json($tagsAllQuizzes); 
+        
+    }
+
+    /**
+     * méthode associée au endpoint /tags/[id]/quiz
+     * liste tous les quiz associés au tag d'id donné
+     *
+     * @param Request $request
+     * @param string $id
+     * @return json
+     */
+    public function listByTag(Request $request, $id)
+    {
+        // format retour json attendu
+        /*
+        [
+            [] => [
+                'id' => '',
+                'title' => '',
+                'description' => '',
+                'firstname' => '',
+                'lastname' => ''
+                ],
+            [] => [
+                'id' => '',
+                'title' => '',
+                'description' => '',
+                'firstname' => '',
+                'lastname' => ''
+                ],
+                ...
+        ]
+        */
+        
+        // on déclare le tableau à retourner en json
+        // il contiendra les infos des quiz associés au tag d'id donné
+        $quizzesByTagId = [];
+
+        // on sélectionne les champs souhaités dans la table quizzes
+        // via une jointure interne sur les tables app_users et quizzes_has_tags
+        $quizzesInfo = Quizzes::select('quizzes.id', 'title', 'description', 'app_users.firstname', 'app_users.lastname')
+        ->join('quizzes_has_tags', 'quizzes.id', '=', 'quizzes_has_tags.quizzes_id')
+        ->join('app_users', 'quizzes.app_users_id', '=', 'app_users.id')
+        ->where('tags_id', '=', $id)
+        ->get();
+
+        //dd($quizzesInfo);
+
+        // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId
+        foreach ($quizzesInfo as $currentQuiz) {
+            array_push($quizzesByTagId, [
+                'id' => $currentQuiz->id,
+                'title' => $currentQuiz->title,
+                'description' => $currentQuiz->description,
+                'firstname' => $currentQuiz->firstname,
+                'lastname' => $currentQuiz->lastname
+            ]);
+        }
+
+        //dd($quizzesByTagId);
+
+        return response()->json($quizzesByTagId); 
         
     }
 }

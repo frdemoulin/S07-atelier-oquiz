@@ -29,7 +29,13 @@ class MainController extends Controller
         //
     }
 
-    // méthode associée à la route /
+    /**
+     * route en get associée au endpoint /
+     * affichage de tous les quiz
+     *
+     * @param Request $request
+     * @return json
+     */
     public function displayHome(Request $request)
     {
         $arrayQuizzes = [];

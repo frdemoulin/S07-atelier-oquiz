@@ -12,7 +12,7 @@
 */
 
 // route en get associée au endpoint /
-// affichage de tous les quiz
+// liste tous les quiz
 $router->get('/', [
     'as' => 'home', // clef = as => valeur = url
     'uses' => 'MainController@displayHome' // le code qui doit être exécuté et qui se situe dans MainController@laMethode à appeler. C'est Lumen qui se charge de découper MainController@laMethode sur le arobase (# avec AltoRouter)
@@ -30,4 +30,11 @@ $router->get('/quiz/{id}', [
 $router->get('/tags', [
     'as' => 'tags',
     'uses' => 'QuizController@tags'
+]);
+
+// route en get associée au endpoint /tags/[id]/quiz
+// liste tous les quiz associés au tag d'id donné
+$router->get('/tags/{id}/quiz', [
+    'as' => 'list_by_tag',
+    'uses' => 'QuizController@listByTag'
 ]);
