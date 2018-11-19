@@ -41,32 +41,65 @@ class QuizController extends Controller
      */
     public function quiz(Request $request, $id)
     {
+        // format retour json attendu
+        /*
+        [
+            [] => [
+                'id' => '',
+                'name' => '',
+                'description' => ''
+                'tags' => [
+                            '0' => '',
+                            '1' => '',
+                            ...
+                           ]
+                 ],      
+            [] => [
+                'id_question' => '',
+                'question' => '',
+                'anecdote' => '',
+                'level' => '',
+                'answer' => '',
+                ],
+            [] => [
+                'id_question' => '',
+                'question' => '',
+                'anecdote' => '',
+                'level' => '',
+                'answer' => '',
+                ],
+                ...
+        ]
+        */
 
-        // array_json =  [
-        //     [] => [
-        //          'id' => '',
-        //          'name' => '',
-        //          'description' => ''
-        //          'tags' => [
-        //                      '0' => '',
-        //                      '1' => '',
-        //                      ...
-        //                    ]
-        //          ],      
-        //     [] => [
-        //          'question' => '',
-        //          'anecdote' => '',
-        //          'level' => '',
-        //          'answer' => '',
-        //         ],
-        //     [] => [
-        //          'question' => '',
-        //          'anecdote' => '',
-        //          'level' => '',
-        //          'answer' => '',
-        //         ],
-        //         ...
-        // ]
+        // format retour json attendu
+        /*
+        [
+            [] => [
+                'id' => '',
+                'name' => '',
+                'description' => ''
+                'tags' => [
+                            '0' => '',
+                            '1' => '',
+                            ...
+                           ]
+                 ],      
+            [] => [
+                'question' => '',
+                'anecdote' => '',
+                'level' => '',
+                'answer' => '',
+                ],
+            [] => [
+                'question' => '',
+                'anecdote' => '',
+                'level' => '',
+                'answer' => '',
+                ],
+                ...
+        ]
+        */
 
         // on déclare le tableau à retourner en json
         // il contiendra les infos d'un quiz d'id donné
@@ -138,6 +171,7 @@ class QuizController extends Controller
 
             $currentQuestionInfo = [
                 //$key => [
+                    'id_question' => $questionId,
                     'question' => $quizQuestion,
                     'anecdote' => $quizAnecdote,
                     'level' => $levelName,
@@ -175,25 +209,24 @@ class QuizController extends Controller
 
     /**
      * méthode associée au endpoint /tags
+     * liste tous les tags
      *
      * @return json
      */
     public function tags()
     {
-
-        // array_json =  [
-        //     'id' => 'name',
-        //      ...
-        // ]
-        
-        // on déclare le tableau à retourner en json
-        // il contiendra tous les tags présents dans la table tags
-        $tagsAllQuizzes = [];
+        // format retour json attendu
+        /*
+        [
+            'id' => 'name',
+             ...
+        ]
+        */
         
         /*
-         ********************************
-         * méthode à la mano avec foreach
-         ********************************
+         *****************************************
+         * méthode à la mano avec foreach / START
+         *****************************************
 
         // on déclare le tableau à retourner en json
         // il contiendra tous les tags présents dans la table tags
@@ -211,13 +244,18 @@ class QuizController extends Controller
         }
         
         return response()->json($tagsAllQuizzes); 
+        
+        *****************************************
+         * END / méthode à la mano avec foreach
+         *****************************************
         */
 
+        // $tagsAllQuizzes est le tableau à retourner en json
+        // il contiendra tous les tags présents dans la table tags
         // on sélectionne les champs id et name dans la table tags
         // la méthode pluck() de Lumen renvoie un tableau associatif
         // 'id' => 'name'
         $tagsAllQuizzes = Tags::pluck('name', 'id');
-        //dd($tagsInfo);
 
         //dd($tagsAllQuizzes);
 
@@ -270,7 +308,7 @@ class QuizController extends Controller
 
         //dd($quizzesInfo);
 
-        // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId
+        // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId à retourner en json
         foreach ($quizzesInfo as $currentQuiz) {
             array_push($quizzesByTagId, [
                 'id' => $currentQuiz->id,

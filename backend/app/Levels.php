@@ -24,7 +24,7 @@ Class Levels extends Model {
      Par defaut, à l'insertion en DB Lumen / Eloquent va essayer d'enregistrer dans une table qui est censé contenir 2 champs supplementaire
      updated_at & created_at (ce qui est une bonne pratique).
 
-     Cependant, dans certains cas et dans notre exemple nous n'avons pas ces deux colonnes. je vais donc explciitement les desactiver avec  public $timestamps = false; 
+     Cependant, dans certains cas et dans notre exemple nous n'avons pas ces deux colonnes. je vais donc explicitement les desactiver avec  public $timestamps = false; 
     */
     public $timestamps = false;
 }
