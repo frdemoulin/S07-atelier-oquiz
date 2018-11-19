@@ -231,18 +231,6 @@ class QuizController extends Controller
         // on déclare le tableau à retourner en json
         // il contiendra tous les tags présents dans la table tags
         $tagsAllQuizzes = [];
-<<<<<<< HEAD
-=======
-        
-        /*
-         ********************************
-         * méthode à la mano avec foreach
-         ********************************
-
-        // on déclare le tableau à retourner en json
-        // il contiendra tous les tags présents dans la table tags
-        $tagsAllQuizzes = [];
->>>>>>> eb4f4af94788df3ed1f4a6c9ea583de0db119bd7
          // on sélectionne les champs id et name dans la table tags
         $tagsInfo = Tags::select('id', 'name')->get();
         //dd($tagsInfo);
@@ -256,7 +244,6 @@ class QuizController extends Controller
         }
         
         return response()->json($tagsAllQuizzes); 
-<<<<<<< HEAD
         
         *****************************************
          * END / méthode à la mano avec foreach
@@ -265,18 +252,10 @@ class QuizController extends Controller
 
         // $tagsAllQuizzes est le tableau à retourner en json
         // il contiendra tous les tags présents dans la table tags
-=======
-        */
-
->>>>>>> eb4f4af94788df3ed1f4a6c9ea583de0db119bd7
         // on sélectionne les champs id et name dans la table tags
         // la méthode pluck() de Lumen renvoie un tableau associatif
         // 'id' => 'name'
         $tagsAllQuizzes = Tags::pluck('name', 'id');
-<<<<<<< HEAD
-=======
-        //dd($tagsInfo);
->>>>>>> eb4f4af94788df3ed1f4a6c9ea583de0db119bd7
 
         //dd($tagsAllQuizzes);
 
@@ -329,11 +308,7 @@ class QuizController extends Controller
 
         //dd($quizzesInfo);
 
-<<<<<<< HEAD
         // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId à retourner en json
-=======
-        // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId
->>>>>>> eb4f4af94788df3ed1f4a6c9ea583de0db119bd7
         foreach ($quizzesInfo as $currentQuiz) {
             array_push($quizzesByTagId, [
                 'id' => $currentQuiz->id,
