@@ -26,15 +26,15 @@ var appHome = {
   },
 
   constructQuiz: function(quiz) {
-    // // je construit le l'url de redirection
+    // je construit le l'url de redirection
      var urlQuiz = appHome.uri + '/quiz/' + quiz.id;
-    // // je clone la première liste
+    // je clone la première liste
     var list = $('.lists div:first-child').clone();
     $(list).removeClass('d-none');
-    // // modification contenu du lien
+    // modification contenu du lien
     var a = $($(list)[0]).find('a');
     $(a).html(quiz.title).attr('href', urlQuiz).addClass('text-dark');
-    // // contenu du h5
+    // contenu du h5
     var h5 = $(list).find('h5');
     $(h5).html('');
     for ( var index in quiz.tags)
@@ -45,10 +45,10 @@ var appHome = {
       btn.addClass(color);
       btn.appendTo(h5);
     }
-    // // contenu du h6
+    // contenu du h6
     var h6 = $(list).find('h6');
     $(h6).html(quiz.description);
-    // // contenu du p
+    // contenu du p
     var p = $(list).find('p');
     $(p).html(quiz.firstname + ' ' + quiz.lastname);
 
