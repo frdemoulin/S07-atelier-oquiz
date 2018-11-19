@@ -16,6 +16,7 @@ appVisitor = {
     });
     // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
     jqxhr.done(function (response) {
+      console.log(response);
       // je compte le nombre de question récupéré - 1 ( le premier index contenant les infos liée au quiz : titre etc...)
       var nbrQuestion = response.length - 1;
       // pour chaque questions
@@ -66,23 +67,21 @@ appVisitor = {
     // je cible le bloc qui contient toutes les réponses
     var answer = $(divQuestion).find('.question-answer-block');
     var allAnswer = [];
-    // je boucle pour créer 4 réponse (dont une correcte)
-    for (var i = 0; i <= 3; i++) 
+    var answerIndex = 0;
+    // je boucle sur mon tableau de mauvaise réponse pour les afficher
+    for (var index in badAnswer[appVisitor.idQuiz][questionInfo.id_question]) 
     {
       // je clone le premier li contenu dans le ul du bloc de réponse
       var li = $($(answer).find('ul li:first-child')).clone();
-      $(li).removeClass('d-none');
-      // mauvaise réponse
-      if (i !== 3)
-      {
-        li.html('lorem ipsum');
-      }
-      // bonne réponse
-      else {
-        li.html(questionInfo.answer)
-      }
-      allAnswer[i] = li ;
+      $(li).removeClass('d-none').html(badAnswer[appVisitor.idQuiz][questionInfo.id_question][index]);
+      allAnswer[answerIndex] = li ;
+      answerIndex++;
     }
+    // bonne réponse
+    var li = $($(answer).find('ul li:first-child')).clone();
+    $(li).removeClass('d-none').html(questionInfo.answer);
+    allAnswer[answerIndex] = li ;
+
     // je mélange les réponse
     var shuffle = appVisitor.shuffleArray(allAnswer);
     // j'ajoute chaque réponse au bloc réponse

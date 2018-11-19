@@ -8,6 +8,7 @@ class QuizController extends CoreController
     public function quiz($params) {
 
         $this->oTemplator->setVar('quizId',$params['id']);
+        $this->oTemplator->setVar('answer',true);
 
         if(empty($_SESSION['userId'])) 
         {

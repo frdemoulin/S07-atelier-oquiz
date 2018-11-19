@@ -70,31 +70,34 @@ appUser = {
     // bloc qui contient les réponses
     var divAnswerBlock = $('<div>').addClass('p-3 question-answer-block');
     var allAnswer = [];
-    // je boucle pour créer 4 réponses input+label que je stock dans une div
-    for (var i = 0; i <= 3; i++) 
+    var answerIndex = 0;
+    // je boucle sur mon tableau de mauvaise réponse que je stock dans une div
+    for (var index in badAnswer[appUser.idQuiz][questionInfo.id_question]) 
     {
       // le nom doit être unique pour que chaque input ai un label associé
       var nameInput = 'answer' + appUser.idAnswer;
       appUser.idAnswer ++;
       var divFormCheck = $('<div>').addClass('form-check');
-      var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput});
-      var label = $('<label>').addClass('form-check-label').attr({for:nameInput});
-      // "mauvaise réponse"
-      if(i !== 3) {
-        input.attr({value:0});
-        label.html('Lorem ipsum');
-      }
-      // bonne réponse
-      else {
-        input.attr({value:1});
-        label.html(questionInfo.answer);
-      }
+      var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput, value:0});
+      var label = $('<label>').addClass('form-check-label').html(badAnswer[appUser.idQuiz][questionInfo.id_question][index]).attr({for:nameInput});
       // ajout des réponse à la div form check
       input.appendTo(divFormCheck);
       label.appendTo(divFormCheck);
-
-      allAnswer[i] = divFormCheck;
+      // ajout de la div form check au tableau des réponses
+      allAnswer[answerIndex] = divFormCheck;
+      answerIndex++;
     }
+    // bonne réponse
+    var nameInput = 'answer' + appUser.idAnswer;
+    var divFormCheck = $('<div>').addClass('form-check');
+    var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput, value:1});
+    var label = $('<label>').addClass('form-check-label').html(questionInfo.answer).attr({for:nameInput});
+    // ajout des réponse à la div form check
+    input.appendTo(divFormCheck);
+    label.appendTo(divFormCheck);
+    // ajout de la div form check au tableau des réponses
+    allAnswer[answerIndex] = divFormCheck;
+
     // on mélange les réponses
     var shuffle = appUser.shuffleArray(allAnswer);
     // avant de les ajouter à la div qui contient toutes les réponses
