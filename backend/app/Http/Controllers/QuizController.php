@@ -6,7 +6,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 
 // import des models pour effectuer des requêtes
+use App\Answers;
 use App\AppUsers;
+use App\Levels;
 use App\Questions;
 use App\Quizzes;
 use App\QuizzesHasTags;
@@ -46,39 +48,10 @@ class QuizController extends Controller
         [
             [] => [
                 'id' => '',
-                'name' => '',
-                'description' => ''
-                'tags' => [
-                            '0' => '',
-                            '1' => '',
-                            ...
-                           ]
-                 ],      
-            [] => [
-                'id_question' => '',
-                'question' => '',
-                'anecdote' => '',
-                'level' => '',
-                'answer' => '',
-                ],
-            [] => [
-                'id_question' => '',
-                'question' => '',
-                'anecdote' => '',
-                'level' => '',
-                'answer' => '',
-                ],
-                ...
-        ]
-        */
-
-        // format retour json attendu
-        /*
-        [
-            [] => [
-                'id' => '',
-                'name' => '',
-                'description' => ''
+                'title' => '',
+                'description' => '',
+                'firstname' => '',
+                'lastname' => '',
                 'tags' => [
                             '0' => '',
                             '1' => '',
@@ -90,41 +63,82 @@ class QuizController extends Controller
                 'anecdote' => '',
                 'level' => '',
                 'answer' => '',
+                'badAnswer' => [
+                                '0'=> '',
+                                '1' => '',
+                                '2' => '',
                 ],
-            [] => [
-                'question' => '',
-                'anecdote' => '',
-                'level' => '',
-                'answer' => '',
-                ],
-                ...
+           ],
         ]
         */
 
         // on déclare le tableau à retourner en json
         // il contiendra les infos d'un quiz d'id donné
         $arrayQuiz = [];
+
+        /*
+        *******************
+        * GESTION QUIZ
+        *******************
+        */
+
         // on sélectionne le quiz d'id passé en paramètre de l'url
         $quizInfo = Quizzes::find($id);
-        $quizId = $request->input('id', $quizInfo->id);
+        $quizId = $id; //$request->input('id', $quizInfo->id);
         // dump($quizId);
         $quizTitle = $request->input('title', $quizInfo->title);
         // dump($quizTitle);
         $quizDescription = $request->input('description', $quizInfo->description);
-        // dump($quizDescription);
+        // dd($quizDescription);
+        $quizAppUsersId = $request->input('app_users_id', $quizInfo->app_users_id);
+        //dd($quizAppUsersId);
 
-        //dump($quizInfo);
+        //dd($quizInfo);
 
-        $authorInfo = DB::select('SELECT firstname, lastname
-        FROM app_users
-        INNER JOIN quizzes
-        ON app_users.id = quizzes.app_users_id
-        WHERE quizzes.id = '.$id
-        );
+        /*
+        *******************
+        * GESTION AUTHOR
+        *******************
+        */
 
-        //dump($authorInfo);
+        $authorInfo = AppUsers::select('firstname', 'lastname')
+                                ->where('id', $quizAppUsersId)
+                                ->get();
+        
+        //dd($authorInfo);
         $quizAuthorFirstname = $authorInfo[0]->firstname;
+        //dump($quizAuthorFirstname);
         $quizAuthorLastname = $authorInfo[0]->lastname;
+        //dump($quizAuthorLastname);
+
+        /*
+        *******************
+        * GESTION TAGS
+        *******************
+        */
+
+        $tagsList = Tags::select('tags.id', 'name')
+                         ->join('quizzes_has_tags', 'quizzes_has_tags.tags_id', '=', 'tags.id')
+                         ->where('quizzes_has_tags.quizzes_id', '=', $quizId)
+                         ->orderBy('quizzes_has_tags.quizzes_id', 'asc')
+                         ->get();
+
+        // $tagsList = DB::select('SELECT tags.id, name
+        //     FROM tags
+        //     INNER JOIN quizzes_has_tags
+        //     ON quizzes_has_tags.tags_id = tags.id
+        //     WHERE quizzes_has_tags.quizzes_id ='.$quizId.'
+        //     ORDER BY quizzes_has_tags.quizzes_id ASC
+        //     ');
+
+        //dd($tagsList);
+
+        $tagsArray = [];
+        foreach($tagsList as $key => $currentTag) {
+            array_push($tagsArray, $currentTag->name);
+        }
+
+        //dd($tagsArray);
 
         $arrayQuiz = [
             0 => [
@@ -132,77 +146,94 @@ class QuizController extends Controller
             'title' => $quizTitle,
             'description' => $quizDescription,
             'firstname' => $quizAuthorFirstname,
-            'lastname' => $quizAuthorLastname
+            'lastname' => $quizAuthorLastname,
+            'tags' => $tagsArray
             ]
         ];
-        //dump($arrayQuiz);
+        //dd($arrayQuiz);
 
-        $questionsInfo = DB::select('SELECT id, question, anecdote, levels_id
-        FROM questions
-        WHERE quizzes_id = '.$id
-        );
-        
-        //dump($questionsInfo);
+        /*
+        ********************
+        * GESTION QUESTIONS
+        ********************
+        */
+
+        $questionsInfo = Questions::select('id', 'question', 'anecdote', 'levels_id', 'answers_id')
+                         //->join('quizzes_has_tags', 'quizzes_has_tags.tags_id', '=', 'tags.id')
+                         ->where('quizzes_id', '=', $quizId)
+                         //->orderBy('quizzes_has_tags.quizzes_id', 'asc')
+                         ->get();
+
+        //dd($questionsInfo);
 
         foreach ($questionsInfo as $key => $value):
 
-            $quizQuestion = $request->input('question', $value->question);
             $questionId = $request->input('id', $value->id);
+            $questionQuestion = $request->input('question', $value->question);
             $quizAnecdote = $request->input('anecdote', $value->anecdote);
             $quizLevelId = $request->input('levels_id', $value->levels_id);
+            $questionAnswerId = $request->input('answers_id', $value->answers_id);
+
+            /*
+            ********************
+            * GESTION LEVEL
+            ********************
+            */
 
             // table levels
-            $levelInfo = DB::select('SELECT `name`
-            FROM `levels`
-            WHERE id ='.$quizLevelId
-            );
+            $levelName = Levels::where('id', '=', $quizLevelId)
+                                ->value('name');
 
-            $levelName = $levelInfo[0]->name;
-            //dump($levelInfo);
+            //dd($levelName);
+
+            /*
+            ********************
+            * GESTION ANSWER
+            ********************
+            */
 
             // table answers
-            $answerInfo = DB::select('SELECT `description`
-            FROM `answers`
-            WHERE questions_id ='.$questionId
-            );
+            $answerDescription = Answers::join('questions', 'questions.answers_id', '=', 'answers.id')
+                                        ->where('answers.questions_id', '=', $questionId)
+                                        ->value('description');
             
-            $answerDescription = $answerInfo[0]->description;
-            //dump($levelName);
+            //dd($answerDescription);
 
+            /*
+            ********************
+            * GESTION BAD ANSWER
+            ********************
+            */
+
+            // table answers
+            $badAnswersInfo = Answers::select('description')
+                                ->where('questions_id', '=', $questionId)
+                                ->where('id', '<>', $questionAnswerId)
+                                ->get();
+            
+            //dd($badAnswersInfo);
+
+            $badAnswers = [];
+            foreach ($badAnswersInfo as $currentBadAnswer) {
+                
+                array_push($badAnswers, $currentBadAnswer->description);
+            }
+            //dd($badAnswers);
+            
             $currentQuestionInfo = [
                 //$key => [
-                    'id_question' => $questionId,
-                    'question' => $quizQuestion,
+                    'question' => $questionQuestion,
                     'anecdote' => $quizAnecdote,
                     'level' => $levelName,
-                    'answer' => $answerDescription
+                    'answer' => $answerDescription,
+                    'badAnswer' => $badAnswers
                 //]
             ];
 
             array_push($arrayQuiz, $currentQuestionInfo);
         endforeach;
 
-        //dump($arrayQuiz);
-
-        
-
-        // return response()->json($arrayQuizzes);
-        // array_json =  [
-        //     [] => [
-        //          'question' => '',
-        //          'anecdote' => '',
-        //          'level' => '',
-        //          'answer' => '',
-        //         ],
-        //     [] => [
-        //          'question' => '',
-        //          'anecdote' => '',
-        //          'level' => '',
-        //          'answer' => '',
-        //         ],    ]
-        // return 'Hello world!'.$id;
-
-        //dump($arrayQuizzes);
+        //dd($arrayQuiz);
 
         return response()->json($arrayQuiz);
     }

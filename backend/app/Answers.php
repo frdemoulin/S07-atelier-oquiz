@@ -18,7 +18,7 @@ Class Answers extends Model {
     */
 
     // By convention, the "snake case", plural name of the class will be used as the table name unless another name is explicitly specified
-    protected $table = 'quizzes';
+    protected $table = 'answers';
 
     /*
      Par defaut, à l'insertion en DB Lumen / Eloquent va essayer d'enregistrer dans une table qui est censé contenir 2 champs supplementaire
