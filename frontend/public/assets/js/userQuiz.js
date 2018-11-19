@@ -72,14 +72,14 @@ appUser = {
     var allAnswer = [];
     var answerIndex = 0;
     // je boucle sur mon tableau de mauvaise réponse que je stock dans une div
-    for (var index in badAnswer[appUser.idQuiz][questionInfo.id_question]) 
+    for (var index in questionInfo.badAnswer) 
     {
       // le nom doit être unique pour que chaque input ai un label associé
       var nameInput = 'answer' + appUser.idAnswer;
       appUser.idAnswer ++;
       var divFormCheck = $('<div>').addClass('form-check');
       var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput, value:0});
-      var label = $('<label>').addClass('form-check-label').html(badAnswer[appUser.idQuiz][questionInfo.id_question][index]).attr({for:nameInput});
+      var label = $('<label>').addClass('form-check-label').html(questionInfo.badAnswer[index]).attr({for:nameInput});
       // ajout des réponse à la div form check
       input.appendTo(divFormCheck);
       label.appendTo(divFormCheck);

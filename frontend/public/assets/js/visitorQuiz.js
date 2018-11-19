@@ -16,7 +16,6 @@ appVisitor = {
     });
     // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
     jqxhr.done(function (response) {
-      console.log(response);
       // je compte le nombre de question récupéré - 1 ( le premier index contenant les infos liée au quiz : titre etc...)
       var nbrQuestion = response.length - 1;
       // pour chaque questions
@@ -69,11 +68,12 @@ appVisitor = {
     var allAnswer = [];
     var answerIndex = 0;
     // je boucle sur mon tableau de mauvaise réponse pour les afficher
-    for (var index in badAnswer[appVisitor.idQuiz][questionInfo.id_question]) 
+
+    for (var index in questionInfo.badAnswer) 
     {
       // je clone le premier li contenu dans le ul du bloc de réponse
       var li = $($(answer).find('ul li:first-child')).clone();
-      $(li).removeClass('d-none').html(badAnswer[appVisitor.idQuiz][questionInfo.id_question][index]);
+      $(li).removeClass('d-none').html(questionInfo.badAnswer[index]);
       allAnswer[answerIndex] = li ;
       answerIndex++;
     }
