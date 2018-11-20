@@ -119,7 +119,7 @@ class UserController extends Controller
             // on teste les résultats de la requête
             if ($userCount == 0) {
                 
-                // si aucun EMAIL trouvé en bdd, on stocke en session un message flash d'erreur
+                // si aucun EMAIL trouvé en bdd, on stocke un message d'erreur
                 $msg = 'identifiant incorrect';
 
                 // sinon on teste si le hash présent en bdd colle avec le password en clair
@@ -157,35 +157,103 @@ class UserController extends Controller
         return response()->json($jsonArray);
     }
 
-    // /**
-    //  * méthode en POST associée au endpoint /signup
-    //  * traite le formulaire d'inscription
-    //  *
-    //  * @param Request $request
-    //  * @return 
-    //  */
-    // public function signupPost(Request $request)
-    // {
-    //     // on récupère les infos en POST du form d'inscription
-    //     $email = $request->input('email');
-    //     $password = $request->input('password');
-    //     $firstname = $request->input('firstname');
-    //     $lastname = $request->input('lastname');
+    /**
+     * méthode en POST associée au endpoint /signup
+     * traite le formulaire d'inscription
+     *
+     * @param Request $request
+     * @return 
+     */
+    public function signupPost(Request $request)
+    {
+        // on récupère les infos en POST du form d'inscription
+        $email = $request->input('email');
+        //dump($email);
+        $passwordClair = $request->input('password');
+        //dump($passwordClair);
+        $passwordClairConfirm = $request->input('password_confirm');
+        //dump($passwordClairConfirm);
+        $firstname = $request->input('firstname');
+        //dump($firstname);
+        $lastname = $request->input('lastname');
+        //dump($lastname);
 
-    //     // contrôle d'intégrité des données
+        /*
+        **************************
+        * CONTROLE INTEGRITE FORM
+        **************************
+        */
 
-    //     $user = new AppUsers();
+        $msg ='';
+        $success = false;
+        // Si au moins un champ est vide	
+        if(empty($email) || empty($passwordClair) || empty($firstname) || empty($lastname)) {
+            $msg = 'Les champs du formulaire ne peuvent pas être vides';
+            //exit($msg);
+        } else { // Si les champs sont tous remplis
+            //echo 'chp tous remplis';
+            // on lit en base les infos de l'user dont l'email a été donné
+            $userCount = AppUsers::select('email')
+            ->where('email', $email)
+            ->count();
+            //dd($userCount);
 
-    //     // on stocke les infos en bdd
-    //     // $user->email = request('email');
-    //     $user->email = $email;
-    //     $user->password = $password;
-    //     $user->firstname = $firstname;
-    //     $user->lastname = $lastname;
-    //     $user->save();
+            // on teste les résultats de la requête
+            // si l'email est déjà utilisé
+            if ($userCount > 0) {
+                
+                // si EMAIL trouvé en bdd, on stocke un message d'erreur
+                $msg = 'Adresse email déjà associée à un compte';
+                //exit($msg);
 
-    //     // on redirige vers la page du compte utilisateur
-    //     return redirect()->route('account');
-    // }
+                // sinon on teste si le hash présent en bdd colle avec le password en clair
+                // password_verify($password, $hash) renvoie true si le hash correspond au password
+            } else {
+                // on compare les deux saisies du password
+                if(strcmp($passwordClair, $passwordClairConfirm) !== 0) {
+                    // si les saisies sont différentes, on stocke un message d'erreur
+                    $msg = 'Les saisies des mots de passe doivent être identiques';
+                    //exit($msg);
+                } else {
+                    // les saisies des deux mots de passe sont identiques
+                    // on hache le mot de passe
+                    $passwordHash = password_hash($passwordClair, PASSWORD_DEFAULT);
+                    //dd($passwordHash);
+                    /*
+                    **************************
+                    * AJOUT DU USER EN BASE
+                    **************************
+                    */
+
+                    $user = new AppUsers();
+
+                    // on stocke les infos en bdd
+                    // $user->email = request('email');
+                    $user->email = $email;
+                    $user->password = $passwordHash;
+                    $user->firstname = $firstname;
+                    $user->lastname = $lastname;
+                    $user->status = 1;
+                    //dd($user);
+                    $user->save();
+                    
+                    $success = true;
+                    $msg = '';
+
+                    session_start();
+                    $_SESSION['userId'] = $user->id;
+                    //exit($success);
+                }
+            }
+        }
+
+        $jsonArray = [
+            'success' => $success,
+            'msg' => $msg
+        ];
+
+        // on retourne un json
+        return response()->json($jsonArray);
+    }
 
 }

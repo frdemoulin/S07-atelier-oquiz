@@ -93,12 +93,12 @@ $router->get('/signin', [
     'uses' => 'UserController@signin'
 ]);
 
-// route en POST associée au endpoint /signin
-// traite le formulaire de connexion
-$router->post('/signin', [
-    'as' => 'signin_post',
-    'uses' => 'UserController@signinPost'
-]);
+// // route en POST associée au endpoint /signin
+// // traite le formulaire de connexion
+// $router->post('/signin', [
+//     'as' => 'signin_post',
+//     'uses' => 'UserController@signinPost'
+// ]);
 
 /**
  * ACCOUNT
