@@ -37,6 +37,7 @@ class MainController extends CoreController
     public function account() {
         if(!empty($_SESSION['userId'])) 
         {
+            $this->oTemplator->setVar('js', 'account');
             $this->show('account');
         }
         else 

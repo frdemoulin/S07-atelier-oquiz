@@ -17,8 +17,14 @@ var app = {
       // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
       jqxhr.done(function (response) {
         for ( var index in response) {
-          var divQuizz = app.constructQuiz(response[index]);
-          $(divQuizz).appendTo('.lists');
+          if(index === '0') 
+          {
+            $('.tag h2').html('Liste des quiz du sujet '+ response[index] +'.');
+          }
+          else {
+            var divQuizz = app.constructQuiz(response[index]);
+            $(divQuizz).appendTo('.lists');
+          }
         }
       });
       // Je déclare la méthode fail, celle-ci sera executée si la réponse est insatisfaisante

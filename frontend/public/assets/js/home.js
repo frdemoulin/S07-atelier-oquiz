@@ -2,7 +2,7 @@ var app = {
   uri: '',
 
   init: function() {
-      app.uri = $('.container').data("uri");
+      app.uri = $('.container').data('uri');
       app.recoverQuizList();
       app.recoverTagList();
   },
