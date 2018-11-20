@@ -33,8 +33,72 @@ class QuizController extends Controller
         //
     }
 
+// méthodes rangées par ordre alphabétique, eh oui !
+
     /**
-     * route en get associée au endpoint /quiz/[id]
+     * méthode en GET associée au endpoint /tags/[id]/quiz
+     * liste tous les quiz associés au tag d'id donné
+     *
+     * @param Request $request
+     * @param string $id
+     * @return json
+     */
+    public function listByTag(Request $request, $id)
+    {
+        // format retour json attendu
+        /*
+        [
+            [] => [
+                'id' => '',
+                'title' => '',
+                'description' => '',
+                'firstname' => '',
+                'lastname' => ''
+                ],
+            [] => [
+                'id' => '',
+                'title' => '',
+                'description' => '',
+                'firstname' => '',
+                'lastname' => ''
+                ],
+                ...
+        ]
+        */
+        
+        // on déclare le tableau à retourner en json
+        // il contiendra les infos des quiz associés au tag d'id donné
+        $quizzesByTagId = [];
+
+        // on sélectionne les champs souhaités dans la table quizzes
+        // via une jointure interne sur les tables app_users et quizzes_has_tags
+        $quizzesInfo = Quizzes::select('quizzes.id', 'title', 'description', 'app_users.firstname', 'app_users.lastname')
+                               ->join('quizzes_has_tags', 'quizzes.id', '=', 'quizzes_has_tags.quizzes_id')
+                               ->join('app_users', 'quizzes.app_users_id', '=', 'app_users.id')
+                               ->where('tags_id', '=', $id)
+                               ->get();
+
+        //dd($quizzesInfo);
+
+        // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId à retourner en json
+        foreach ($quizzesInfo as $currentQuiz) {
+            array_push($quizzesByTagId, [
+                'id' => $currentQuiz->id,
+                'title' => $currentQuiz->title,
+                'description' => $currentQuiz->description,
+                'firstname' => $currentQuiz->firstname,
+                'lastname' => $currentQuiz->lastname
+            ]);
+        }
+
+        //dd($quizzesByTagId);
+
+        return response()->json($quizzesByTagId); 
+        
+    }
+
+    /**
+     * route en GET associée au endpoint /quiz/[id]
      * affichage du quiz d'id donné
      *
      * @param Request $request
@@ -159,9 +223,7 @@ class QuizController extends Controller
         */
 
         $questionsInfo = Questions::select('id', 'question', 'anecdote', 'levels_id', 'answers_id')
-                         //->join('quizzes_has_tags', 'quizzes_has_tags.tags_id', '=', 'tags.id')
                          ->where('quizzes_id', '=', $quizId)
-                         //->orderBy('quizzes_has_tags.quizzes_id', 'asc')
                          ->get();
 
         //dd($questionsInfo);
@@ -239,6 +301,24 @@ class QuizController extends Controller
     }
 
     /**
+     * route en POST associée au endpoint /quiz/[id]
+     * traitement du formulaire du quiz soumis et affichage des bonnes réponses, scores, etc
+     *
+     * @param Request $request
+     * @param string $id
+     * @return json
+     */
+    public function quizPost(Request $request, $id)
+    {
+        // exemple de récupération de champs passés en POST
+        // on peut utiliser une valeur en 2e paramètre qui sera retournée par défaut si l'input côté form est envoyé à vide
+        // $name = $request->input('name', '');
+        // $editor = $request->input('editor', '');
+        // $release = $request->input('release_date', '');
+        // $platformId = $request->input('platform_id', '');
+    }
+
+    /**
      * méthode associée au endpoint /tags
      * liste tous les tags
      *
@@ -250,36 +330,39 @@ class QuizController extends Controller
         /*
         [
             'id' => 'name',
+            'id' => 'name',
              ...
         ]
         */
         
-        /*
-         *****************************************
-         * méthode à la mano avec foreach / START
-         *****************************************
+        // /*
+        //  *****************************************
+        //  * méthode à la mano avec foreach / START
+        //  *****************************************
+        //  */
 
-        // on déclare le tableau à retourner en json
-        // il contiendra tous les tags présents dans la table tags
-        $tagsAllQuizzes = [];
-         // on sélectionne les champs id et name dans la table tags
-        $tagsInfo = Tags::select('id', 'name')->get();
-        //dd($tagsInfo);
+        // // on déclare le tableau à retourner en json
+        // // il contiendra tous les tags présents dans la table tags
+        // $tagsAllQuizzes = [];
+        //  // on sélectionne les champs id et name dans la table tags
+        // $tagsInfo = Tags::select('id', 'name')->get();
+        // //dd($tagsInfo);
         
-        // on pushe les infos des tags dans le tableau associatif $tagsAllQuizzes
-        // 'id' => 'name'
-        foreach ($tagsInfo as $currentTag) {
-            $currentTagId = $currentTag->id;
-            $currentTagName = $currentTag->name;
-            $tagsAllQuizzes[$currentTagId] = $currentTagName;
-        }
+        // // on pushe les infos des tags dans le tableau associatif $tagsAllQuizzes
+        // // 'id' => 'name'
+        // foreach ($tagsInfo as $currentTag) {
+        //     $currentTagId = $currentTag->id;
+        //     $currentTagName = $currentTag->name;
+        //     $tagsAllQuizzes[$currentTagId] = $currentTagName;
+        // }
         
-        return response()->json($tagsAllQuizzes); 
+        // return response()->json($tagsAllQuizzes); 
         
-        *****************************************
-         * END / méthode à la mano avec foreach
-         *****************************************
-        */
+        // /*
+        // *****************************************
+        //  * END / méthode à la mano avec foreach
+        //  *****************************************
+        // */
 
         // $tagsAllQuizzes est le tableau à retourner en json
         // il contiendra tous les tags présents dans la table tags
@@ -290,69 +373,8 @@ class QuizController extends Controller
 
         //dd($tagsAllQuizzes);
 
-        return response()->json($tagsAllQuizzes); 
+        return response()->json($tagsAllQuizzes);
         
     }
 
-    /**
-     * méthode associée au endpoint /tags/[id]/quiz
-     * liste tous les quiz associés au tag d'id donné
-     *
-     * @param Request $request
-     * @param string $id
-     * @return json
-     */
-    public function listByTag(Request $request, $id)
-    {
-        // format retour json attendu
-        /*
-        [
-            [] => [
-                'id' => '',
-                'title' => '',
-                'description' => '',
-                'firstname' => '',
-                'lastname' => ''
-                ],
-            [] => [
-                'id' => '',
-                'title' => '',
-                'description' => '',
-                'firstname' => '',
-                'lastname' => ''
-                ],
-                ...
-        ]
-        */
-        
-        // on déclare le tableau à retourner en json
-        // il contiendra les infos des quiz associés au tag d'id donné
-        $quizzesByTagId = [];
-
-        // on sélectionne les champs souhaités dans la table quizzes
-        // via une jointure interne sur les tables app_users et quizzes_has_tags
-        $quizzesInfo = Quizzes::select('quizzes.id', 'title', 'description', 'app_users.firstname', 'app_users.lastname')
-        ->join('quizzes_has_tags', 'quizzes.id', '=', 'quizzes_has_tags.quizzes_id')
-        ->join('app_users', 'quizzes.app_users_id', '=', 'app_users.id')
-        ->where('tags_id', '=', $id)
-        ->get();
-
-        //dd($quizzesInfo);
-
-        // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId à retourner en json
-        foreach ($quizzesInfo as $currentQuiz) {
-            array_push($quizzesByTagId, [
-                'id' => $currentQuiz->id,
-                'title' => $currentQuiz->title,
-                'description' => $currentQuiz->description,
-                'firstname' => $currentQuiz->firstname,
-                'lastname' => $currentQuiz->lastname
-            ]);
-        }
-
-        //dd($quizzesByTagId);
-
-        return response()->json($quizzesByTagId); 
-        
-    }
 }
