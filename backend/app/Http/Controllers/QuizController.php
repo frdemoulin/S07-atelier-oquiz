@@ -48,6 +48,7 @@ class QuizController extends Controller
         // format retour json attendu
         /*
         [
+            [] => 'name'
             [] => [
                 'id' => '',
                 'title' => '',
@@ -69,6 +70,14 @@ class QuizController extends Controller
         // on déclare le tableau à retourner en json
         // il contiendra les infos des quiz associés au tag d'id donné
         $quizzesByTagId = [];
+        
+        // on sélectionne le champ name dans la table tags
+        $tagName = Tags::where('id', '=', $id)
+                        ->value('name');
+
+        $quizzesByTagId = [
+            '0' => $tagName
+        ];
 
         // on sélectionne les champs souhaités dans la table quizzes
         // via une jointure interne sur les tables app_users et quizzes_has_tags
@@ -79,7 +88,7 @@ class QuizController extends Controller
                                ->get();
 
         //dd($quizzesInfo);
-
+        
         // on pushe les infos des quiz dans le tableau associatif $quizzesByTagId à retourner en json
         foreach ($quizzesInfo as $currentQuiz) {
             array_push($quizzesByTagId, [

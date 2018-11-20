@@ -9,7 +9,7 @@ var app = {
 
   recoverQuizList: function () {
     var jqxhr = $.ajax({
-      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/', 
+      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/',
       method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
       dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
     });
