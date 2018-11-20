@@ -6,14 +6,16 @@
     </p>
 </div>
 
-<div class="row lists">
+<div class="row d-flex flex-wrap">
 
-    <div class="col-sm-4 d-none">
-        <h3 class="text-blue"> <a href="">Titre 1</a></h3>
-        <h5>Tag</h5>
-        <h6>Description</h6>
-        <p>by author name</p>
+    <div class="row col-lg-9 lists">
+        <div class="col-sm-4 d-none">
+            <h3 class="text-blue"> <a href="">Titre 1</a></h3>
+            <h5>Tag</h5>
+            <h6>Description</h6>
+            <p>by author name</p>
+        </div>
     </div>
+    <?php $this->includeOne('aside') ?>
 
 </div>
-

@@ -1,4 +1,4 @@
-<div class="row all-form">
+<div class="row">
     <main class="col-lg-12 d-flex flex-row ">
         <form class="col-5 mx-auto py-3 border register">
             <h3 class="text-center">S'inscrire</h3>

@@ -17,6 +17,7 @@ class MainController extends CoreController
         }
         else 
         {
+            $this->oTemplator->setVar('js', 'signIn');
             $this->show('signIn');
         }
     }
@@ -28,6 +29,7 @@ class MainController extends CoreController
         }
         else 
         {
+            $this->oTemplator->setVar('js', 'register');
             $this->show('register');
         }
     }
@@ -39,6 +41,7 @@ class MainController extends CoreController
         }
         else 
         {
+            $this->oTemplator->setVar('js', 'signIn');
             $this->show('signIn');
         }
     }

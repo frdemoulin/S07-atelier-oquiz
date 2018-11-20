@@ -4,6 +4,7 @@ var app = {
   init: function() {
       app.uri = $('.container').data("uri");
       app.recoverQuizList();
+      app.recoverTagList();
   },
 
   recoverQuizList: function () {
@@ -17,6 +18,25 @@ var app = {
       for ( var index in response) {
         var divQuizz = app.constructQuiz(response[index]);
         $(divQuizz).appendTo('.lists');
+      }
+    });
+    // Je déclare la méthode fail, celle-ci sera executée si la réponse est insatisfaisante
+    jqxhr.fail(function () {
+      alert('Requête échouée');
+    });
+  },
+
+  recoverTagList: function() {
+    var jqxhr = $.ajax({
+      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/tags', 
+      method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
+      dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
+    });
+    // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
+    jqxhr.done(function (response) {
+      for ( var index in response) {
+        var tag = app.constructTag(index, response[index]);
+        $(tag).appendTo('ul.category-aside');
       }
     });
     // Je déclare la méthode fail, celle-ci sera executée si la réponse est insatisfaisante
@@ -40,7 +60,7 @@ var app = {
     for ( var index in quiz.tags)
     {
       var urlTag = app.uri + '/quiz-by-tag/' + quiz.tags[index].id;
-      var btn = $('<a>').html(quiz.tags[index].name).addClass('text-light btn mr-2 px-2 py-1').attr('href', urlTag);
+      var btn = $('<a>').html(quiz.tags[index].name).addClass('text-light btn mr-2 mb-2 px-2 py-1').attr('href', urlTag);
       var color = app.giveColor(quiz.tags[index].id);
       btn.addClass(color);
       btn.appendTo(h5);
@@ -53,6 +73,15 @@ var app = {
     $(p).html('by ' + quiz.firstname + ' ' + quiz.lastname);
 
     return list;
+  },
+
+  constructTag: function(id, name) {
+    var urlTag = app.uri + '/quiz-by-tag/' + id;
+    var li = $('<li>').addClass('list-group-item');
+    var a = $('<a>').attr('href', urlTag).html(name);
+
+    a.appendTo(li);
+    return li;
   },
 
   giveColor: function (id) {

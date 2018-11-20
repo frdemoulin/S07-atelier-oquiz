@@ -31,7 +31,7 @@
             </a>
         </li>
 <?php else : ?>
-<li class="nav-item">
+        <li class="nav-item">
             <a class="nav-link text-blue" href="<?= $this->router->generate('signIn');?>">
                 <i class="fas fa-user"></i>
                 Se connecter
