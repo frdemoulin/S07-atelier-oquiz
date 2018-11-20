@@ -72,6 +72,7 @@ class QuizController extends Controller
         $quizzesByTagId = [];
         
         // on sélectionne le champ name dans la table tags
+        // la méthode value renvoie la valeur d'un champ, ô surprise
         $tagName = Tags::where('id', '=', $id)
                         ->value('name');
 

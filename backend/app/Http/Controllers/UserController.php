@@ -30,51 +30,29 @@ class UserController extends Controller
     }
 
     /**
-     * méthode en GET associée au endpoint /account/[id]
+     * méthode en GET associée au endpoint /account
      * page profil de l’utilisateur connecté
-     * renvoie les info du user d'id donné
+     * renvoie firstname et lastname du user connecté d'id donné
+     * l'id est récupéré en session
      *
-     * @param string $id
      * @return json
      */
-    // public function profile($id)
-    // {
-
-    //     // on lit en base les infos de l'user
-    //     $userInfo = AppUsers::select('firstname', 'lastname')
-    //                             ->where('id', $id)
-    //                             ->get();
-
-    //     //dd($userInfo);
-
-    //     // on redirige vers la page du compte utilisateur
-    //     return response()->json($userInfo);
-    // }
 
     public function profile()
     {   
         // array réponse à encoder en json
         $userResponse = [];
+        // initialisation des variables flash
         $success = false;
         $msg = '';
 
-        // // on lit en base les infos de l'user
-        // $userInfo = AppUsers::select('firstname', 'lastname')
-        // ->where('id', 1)
-        // ->get();
-        
-        // $firstname = $userInfo[0]->firstname;
-        // //dump($firstname);
-        // $lastname = $userInfo[0]->lastname;
-        // //dd($lastname);
-        // //dd($userInfo);
-
         session_start();
+        // si l'id user est présent en session, on le transmet en retour avec firstname et lastname
         if (isset($_SESSION['userId']) && !empty($_SESSION['userId'])) {
             $success = true;
             $id = $_SESSION['userId'];
 
-            // on lit en base les infos de l'user
+            // on lit en base firstname et lastname de l'user
             $userInfo = AppUsers::select('firstname', 'lastname')
             ->where('id', $id)
             ->get();
@@ -82,8 +60,7 @@ class UserController extends Controller
             $firstname = $userInfo[0]->firstname;
             //dump($firstname);
             $lastname = $userInfo[0]->lastname;
-
-            //dd($userInfo);
+            //dump($latname);
 
             $userResponse = [
                 'success' => $success,
@@ -94,6 +71,7 @@ class UserController extends Controller
         return response()->json($userResponse);
 
         } else {
+            // l'id de l'user n'est pas en session
             $msg = 'id user non défini en session';
 
             $userResponse = [
@@ -110,7 +88,7 @@ class UserController extends Controller
      * traite le formulaire de connexion
      *
      * @param Request $request
-     * @return 
+     * @return json
      */
     public function signin(Request $request)
     {
@@ -141,14 +119,16 @@ class UserController extends Controller
         if(empty($email) || empty($passwordClair)) {
             $msg = 'Les champs email et mot de passe ne peuvent pas être vides';
         } else { // Si EMAIL et PASSWORD sont remplis
-            //echo 'pouet';
-            // on lit en base les infos de l'user dont l'email a été donné
+            // echo 'pouet';
+            // on cherche en base la présence de l'email donné dans le form de signin
+            // count() compte le nombre d'entrées retournées
             $userCount = AppUsers::select('email', 'password')
-            ->where('email', $email)
-            ->count();
+                                ->where('email', $email)
+                                ->count();
             //dd($userCount);
 
             // on teste les résultats de la requête
+            // si $userCount = 0, alors l'email n'est pas présent en bdd
             if ($userCount == 0) {
                 
                 // si aucun EMAIL trouvé en bdd, on stocke un message d'erreur
@@ -194,7 +174,7 @@ class UserController extends Controller
      * traite le formulaire d'inscription
      *
      * @param Request $request
-     * @return 
+     * @return json
      */
     public function signupPost(Request $request)
     {
@@ -218,20 +198,21 @@ class UserController extends Controller
 
         $msg ='';
         $success = false;
-        // Si au moins un champ est vide	
+        // Si au moins un champ est vide, on stocke un message d'erreur
         if(empty($email) || empty($passwordClair) || empty($firstname) || empty($lastname)) {
             $msg = 'Les champs du formulaire ne peuvent pas être vides';
             //exit($msg);
         } else { // Si les champs sont tous remplis
             //echo 'chp tous remplis';
-            // on lit en base les infos de l'user dont l'email a été donné
+            // on cherche en base la présence de l'email donné dans le form de signup
+            // count() compte le nombre d'entrées retournées
             $userCount = AppUsers::select('email')
             ->where('email', $email)
             ->count();
             //dd($userCount);
 
             // on teste les résultats de la requête
-            // si l'email est déjà utilisé
+            // si l'email est déjà utilisé, $userCount = 1 et on entre dans la condition
             if ($userCount > 0) {
                 
                 // si EMAIL trouvé en bdd, on stocke un message d'erreur
@@ -241,6 +222,7 @@ class UserController extends Controller
                 // sinon on teste si le hash présent en bdd colle avec le password en clair
                 // password_verify($password, $hash) renvoie true si le hash correspond au password
             } else {
+                // $userCount = 0
                 // on compare les deux saisies du password
                 if(strcmp($passwordClair, $passwordClairConfirm) !== 0) {
                     // si les saisies sont différentes, on stocke un message d'erreur
@@ -248,30 +230,34 @@ class UserController extends Controller
                     //exit($msg);
                 } else {
                     // les saisies des deux mots de passe sont identiques
-                    // on hache le mot de passe
+                    // on hache alors le mot de passe
                     $passwordHash = password_hash($passwordClair, PASSWORD_DEFAULT);
                     //dd($passwordHash);
+                    
                     /*
                     **************************
-                    * AJOUT DU USER EN BASE
+                    * AJOUT USER EN BASE
                     **************************
                     */
 
+                    // on instancie un nouveau model AppUsers
                     $user = new AppUsers();
 
-                    // on stocke les infos en bdd
-                    // $user->email = request('email');
+                    // on renseigne les infos du user dans le model
                     $user->email = $email;
                     $user->password = $passwordHash;
                     $user->firstname = $firstname;
                     $user->lastname = $lastname;
                     $user->status = 1;
                     //dd($user);
+                    
+                    // on save en bdd
                     $user->save();
                     
                     $success = true;
                     $msg = '';
 
+                    // on ouvre alors la session
                     session_start();
                     $_SESSION['userId'] = $user->id;
                     //exit($success);
