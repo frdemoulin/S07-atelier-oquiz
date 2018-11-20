@@ -37,41 +37,73 @@ class UserController extends Controller
      * @param string $id
      * @return json
      */
-    public function profile($id)
-    {
-
-        // on lit en base les infos de l'user
-        $userInfo = AppUsers::select('firstname', 'lastname')
-                                ->where('id', $id)
-                                ->get();
-
-        //dd($userInfo);
-
-        // on redirige vers la page du compte utilisateur
-        return response()->json($userInfo);
-    }
-
-    /**
-     * méthode en GET associée au endpoint /logout
-     * traite la déconnexion d'un utilisateur
-     *
-     * @param Request $request
-     * @param string $id
-     * @return json
-     */
-    // public function logout(Request $request)
+    // public function profile($id)
     // {
-    //     // on ouvre la session
-    //     session_start();
-    //     // on efface les données de session
-    //     session_unset();
-    //     // on détruit la session
-    //     session_destroy();
-    //     // on redirige vers le formulaire de connexion
-    //     header('Location: connexion.php');
-    //     // on stoppe le script courant
-    //     exit();
+
+    //     // on lit en base les infos de l'user
+    //     $userInfo = AppUsers::select('firstname', 'lastname')
+    //                             ->where('id', $id)
+    //                             ->get();
+
+    //     //dd($userInfo);
+
+    //     // on redirige vers la page du compte utilisateur
+    //     return response()->json($userInfo);
     // }
+
+    public function profile()
+    {   
+        // array réponse à encoder en json
+        $userResponse = [];
+        $success = false;
+        $msg = '';
+
+        // // on lit en base les infos de l'user
+        // $userInfo = AppUsers::select('firstname', 'lastname')
+        // ->where('id', 1)
+        // ->get();
+        
+        // $firstname = $userInfo[0]->firstname;
+        // //dump($firstname);
+        // $lastname = $userInfo[0]->lastname;
+        // //dd($lastname);
+        // //dd($userInfo);
+
+        if (isset($_SESSION['userId']) && !empty($_SESSION['userId'])) {
+            session_start();
+            $success = true;
+            $id = $_SESSION['userId'];
+
+            // on lit en base les infos de l'user
+            $userInfo = AppUsers::select('firstname', 'lastname')
+            ->where('id', $id)
+            ->get();
+            
+            $firstname = $userInfo[0]->firstname;
+            //dump($firstname);
+            $lastname = $userInfo[0]->lastname;
+
+            //dd($userInfo);
+
+            $userResponse = [
+                'success' => $success,
+                'firstname' => $firstname,
+                'lastname' => $lastname
+            ];
+
+        return response()->json($userResponse);
+
+        } else {
+            $msg = 'id user non défini en session';
+
+            $userResponse = [
+                'success' => $success,
+                'msg' => $msg
+            ];
+
+            return response()->json($userResponse);
+        }
+    }
 
     /**
      * méthode en GET associée au endpoint /signin
