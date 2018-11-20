@@ -69,8 +69,8 @@ class UserController extends Controller
         // //dd($lastname);
         // //dd($userInfo);
 
+        session_start();
         if (isset($_SESSION['userId']) && !empty($_SESSION['userId'])) {
-            session_start();
             $success = true;
             $id = $_SESSION['userId'];
 
