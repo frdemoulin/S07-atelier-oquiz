@@ -2,20 +2,19 @@ var app = {
   uri: '',
 
   init: function() {
-    console.log('coucou');
     // je récupère ma base uri
-    app.uri = $('.container').data("uri");
+    app.uri = $('.container').data('uri');
     $('form').on('submit', app.handleCheckForm);
   },
 
   handleCheckForm: function(evt) {
     evt.preventDefault();
+    app.clearError();
     // je récupère les contenu des formulaire en retirant les espaces
     var data = {
       'email': $.trim($($(evt.target).find('.email')).val()),
       'password': $.trim($($(evt.target).find('.password')).val())
     };
-    console.log(data);
     // par défaut je considère que des valeurs on été mis dans chaque input
     var notEmpty = true;
     // je vérifie qu'aucun input n'est vide
@@ -40,7 +39,6 @@ var app = {
     }
   },
   dataRequest: function(dataValue) {
-    console.log(dataValue);
     var jqxhr = $.ajax({
       url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/signin', 
       method: 'GET',
@@ -88,8 +86,6 @@ var app = {
 
     // je change les deux derniers liens de ma navbar (connexion et inscription)
     var allLi = $('ul.nav-pills li');
-    console.log(allLi[1]);
-    console.log(allLi[2]);
     $(allLi[1]).addClass('d-none');
     $(allLi[2]).addClass('d-none');
     var liAccount = '<li class="nav-item">\
@@ -108,6 +104,14 @@ var app = {
     var error = $('<div>').addClass('mx-auto my-2 border text-light bg-danger rounded p-2 error').html(msg);
     
     error.appendTo(form);
-  }
+  },
+
+  clearError: function() {
+    // s'il y a bien des messages d'erreur
+    if(typeof $('.error') !== 'undefined')
+    {
+      $('.error').remove();
+    }
+  },
 };
 $(app.init);

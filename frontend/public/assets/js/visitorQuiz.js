@@ -3,8 +3,8 @@ app = {
   idQuiz: '',
 
   init: function() {
-    app.uri = $('.container').data("uri");
-    app.idQuiz =  $('.quiz').data("id");
+    app.uri = $('.container').data('uri');
+    app.idQuiz =  $('.quiz').data('id');
     app.recoverQuiz();
   },
 

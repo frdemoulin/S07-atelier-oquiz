@@ -6,9 +6,9 @@ app = {
 
   init: function() {
     // je récupère ma base uri
-    app.uri = $('.container').data("uri");
+    app.uri = $('.container').data('uri');
     // et l'id du quiz cliqué
-    app.idQuiz =  $('.quiz').data("id");
+    app.idQuiz =  $('.quiz').data('id');
     // puis je lance ma requête ajax 
     app.recoverQuiz();
     $('form').on('submit', app.correction);

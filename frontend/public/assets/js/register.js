@@ -2,22 +2,25 @@ var app = {
     uri: '',
   
     init: function() {
-      console.log('coucou');
       // je récupère ma base uri
-      app.uri = $('.container').data("uri");
-      //$('form').on('submit', app.handleCheckForm);
+      app.uri = $('.container').data('uri');
+      $('form').on('submit', app.handleCheckForm);
     },
   
     handleCheckForm: function(evt) {
       evt.preventDefault();
+      app.clearError();
       // je récupère les contenu des formulaire en retirant les espaces
       var data = {
-        'name': $.trim($($(evt.target).find('.name')).val()),
+        'lastname': $.trim($($(evt.target).find('.last-name')).val()),
+        'firstname': $.trim($($(evt.target).find('.first-name')).val()),
         'email': $.trim($($(evt.target).find('.email')).val()),
-        'password': $.trim($($(evt.target).find('.password')).val())
+        'password': $.trim($($(evt.target).find('.password')).val()),
+        'password_confirm': $.trim($($(evt.target).find('.password-confirm')).val())
       };
       // par défaut je considère que des valeurs on été mis dans chaque input
       var notEmpty = true;
+
       // je vérifie qu'aucun input n'est vide
       for ( var index in data) 
       {
@@ -27,27 +30,43 @@ var app = {
         {
           var textError = 'Vous ne pouvez pas laisser le champ '+ index +' vide.';
           var error = $('<div>').addClass('mx-auto my-2 border text-light bg-danger rounded p-2 error').html(textError);
-          }
+          
           // j'ajoute le message au formulaire
           error.appendTo(evt.target);
           notEmpty = false;
         }
+        }
         // si notEmpty = true, alors aucun input n'était vide
         if (notEmpty) 
         {
-          // je lance la requête vers le back
-          app.dataRequest(data);
+            // si les deux mot de passe correspondent bien
+            if(data['password'] === data['password_confirm']) 
+            {
+                // je lance la requête vers le back
+                app.dataRequest(data);
+            }
+            // sinon j'affiche un message
+            else 
+            {
+                var textError = 'Les mots de passe doivent être identiques';
+                var error = $('<div>').addClass('mx-auto my-2 border text-light bg-danger rounded p-2 error').html(textError);
+        
+                // j'ajoute le message au formulaire
+                error.appendTo(evt.target);
+            }
         }
     },
     dataRequest: function(dataValue) {
       var jqxhr = $.ajax({
-        url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/', 
-        method: 'GET',
+        url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/signup', 
+        method: 'POST',
         dataType: 'json',
         data: {
-          name:  dataValue['name'],
+          lastname:  dataValue['lastname'],
+          firstname:  dataValue['firstname'],
           email: dataValue['email'],
-          password: dataValue['password']
+          password: dataValue['password'],
+          password_confirm:  dataValue['password_confirm']
         }
       });
       // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
@@ -88,8 +107,6 @@ var app = {
   
       // je change les deux derniers liens de ma navbar (connexion et inscription)
       var allLi = $('ul.nav-pills li');
-      console.log(allLi[1]);
-      console.log(allLi[2]);
       $(allLi[1]).addClass('d-none');
       $(allLi[2]).addClass('d-none');
       var liAccount = '<li class="nav-item">\
@@ -108,6 +125,14 @@ var app = {
     var error = $('<div>').addClass('mx-auto my-2 border text-light bg-danger rounded p-2 error').html(msg);
     
     error.appendTo(form);
-    }
+    },
+
+    clearError: function() {
+        // s'il y a bien des messages d'erreur
+        if(typeof $('.error') !== 'undefined')
+        {
+          $('.error').remove();
+        }
+      },
   };
   $(app.init);
