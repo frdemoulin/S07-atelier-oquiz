@@ -34,15 +34,11 @@ class UserController extends Controller
      * page profil de l’utilisateur connecté
      * renvoie les info du user d'id donné
      *
-     * @param Request $request
      * @param string $id
      * @return json
      */
-    public function profile(Request $request, $id)
+    public function profile($id)
     {
-        
-        // on récupère les infos en GET
-        //$id = $request->input('id');
 
         // on lit en base les infos de l'user
         $userInfo = AppUsers::select('firstname', 'lastname')
@@ -50,10 +46,6 @@ class UserController extends Controller
                                 ->get();
 
         //dd($userInfo);
-
-        //$firstname = $request->input('firstname');
-        //$lastname = $request->input('lastname');
-
 
         // on redirige vers la page du compte utilisateur
         return response()->json($userInfo);
@@ -81,24 +73,89 @@ class UserController extends Controller
     //     exit();
     // }
 
-    // /**
-    //  * méthode en POST associée au endpoint /signin
-    //  * traite le formulaire de connexion
-    //  *
-    //  * @param Request $request
-    //  * @return 
-    //  */
-    // public function signinPost(Request $request)
-    // {
-    //     // on récupère les infos en POST du form de connexion
-    //     $email = $request->input('email');
-    //     $password = $request->input('password');
+    /**
+     * méthode en GET associée au endpoint /signin
+     * traite le formulaire de connexion
+     *
+     * @param Request $request
+     * @return 
+     */
+    public function signin(Request $request)
+    {
+        // format retour json attendu
+        /*
+        [
+            'success' => true ou false,
+            msg => 'vide ou pas si erreur à afficher'
+            ];
+        ]
+        */
 
-    //     // contrôle d'intégrité des données
+        //dd($request);
+        // on récupère les infos du form de connexion
+        $email = $request->input('email');
+        $passwordClair = $request->input('password');
+        //dd($email);
+        //dd($passwordClair);
 
-    //     // on redirige vers la page du compte utilisateur
-    //     return redirect()->route('account');
-    // }
+        /*
+        **************************
+        * CONTROLE INTEGRITE FORM
+        **************************
+        */
+        $msg ='identifiant et mot de passe incorrects';
+        $success = false;
+        // Si EMAIL ou PASSWORD est vide	
+        if(empty($email) || empty($passwordClair)) {
+            $msg = 'Les champs email et mot de passe ne peuvent pas être vides';
+        } else { // Si EMAIL et PASSWORD sont remplis
+            //echo 'pouet';
+            // on lit en base les infos de l'user dont l'email a été donné
+            $userCount = AppUsers::select('email', 'password')
+            ->where('email', $email)
+            ->count();
+            //dd($userCount);
+
+            // on teste les résultats de la requête
+            if ($userCount == 0) {
+                
+                // si aucun EMAIL trouvé en bdd, on stocke en session un message flash d'erreur
+                $msg = 'identifiant incorrect';
+
+                // sinon on teste si le hash présent en bdd colle avec le password en clair
+                // password_verify($password, $hash) renvoie true si le hash correspond au password
+            } elseif ($userCount == 1) {
+                
+                // on lit en base les infos de l'user dont l'email a été trouvé
+                $userInfo = AppUsers::select('id', 'email', 'password')
+                ->where('email', $email)
+                ->get();
+                // on récupère le hash du password présent en bdd
+                $passwordHashBdd = $userInfo[0]->password;
+                //dd($passwordHashBdd);
+                
+                // on teste le hash
+                if(password_verify($passwordClair, $passwordHashBdd)) {
+                $success = true;
+                session_start();
+                $_SESSION['userId'] = $userInfo[0]->id;
+                //dd($_SESSION['userId']);
+                $msg = '';
+                //dd($success);
+                } else {
+                    $msg = 'mot de passe incorrect';
+                }
+            }
+        }
+
+        $jsonArray = [
+            'success' => $success,
+            'msg' => $msg
+        ];
+
+        // on retourne un json
+        return response()->json($jsonArray);
+    }
 
     // /**
     //  * méthode en POST associée au endpoint /signup
