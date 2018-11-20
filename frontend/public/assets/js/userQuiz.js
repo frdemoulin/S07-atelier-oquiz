@@ -1,7 +1,8 @@
 app = {
   uri: '',
   idQuiz: '',
-  idAnswer:1,
+  idAnswer:0,
+  questionCpt: 1,
 
   init: function() {
     // je récupère ma base uri
@@ -10,6 +11,7 @@ app = {
     app.idQuiz =  $('.quiz').data("id");
     // puis je lance ma requête ajax 
     app.recoverQuiz();
+    $('form').on('submit', app.correction);
   },
 
   recoverQuiz: function () {
@@ -58,6 +60,12 @@ app = {
   },
 
   constructQuestion: function(questionInfo) {
+    // préparation des variable utile ( dans le for )
+    var allAnswer = [];
+    var answerIndex = 0;
+    var questionNbr = 'question' + app.questionCpt;
+    app.questionCpt++;
+
     // je créer une div qui contiendra chaque élément de la question
     var divContainer = $('<div>').addClass('col-sm-3 border p-0 m-2');
     // j'attribue une couleur en fonction du level
@@ -69,16 +77,15 @@ app = {
     var divQuestion = $('<div>').addClass('p-3 background-grey').html(questionInfo.question);
     // bloc qui contient les réponses
     var divAnswerBlock = $('<div>').addClass('p-3 question-answer-block');
-    var allAnswer = [];
-    var answerIndex = 0;
+    
     // je boucle sur mon tableau de mauvaise réponse que je stock dans une div
     for (var index in questionInfo.badAnswer) 
     {
       // le nom doit être unique pour que chaque input ai un label associé
-      var nameInput = 'answer' + app.idAnswer;
       app.idAnswer ++;
+      var nameInput = 'answer' + app.idAnswer;
       var divFormCheck = $('<div>').addClass('form-check');
-      var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput, value:0});
+      var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:questionNbr, id:nameInput, value:0});
       var label = $('<label>').addClass('form-check-label').html(questionInfo.badAnswer[index]).attr({for:nameInput});
       // ajout des réponse à la div form check
       input.appendTo(divFormCheck);
@@ -87,10 +94,12 @@ app = {
       allAnswer[answerIndex] = divFormCheck;
       answerIndex++;
     }
+    
     // bonne réponse
+    app.idAnswer ++;
     var nameInput = 'answer' + app.idAnswer;
     var divFormCheck = $('<div>').addClass('form-check');
-    var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput, value:1});
+    var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:questionNbr, id:nameInput, value:1});
     var label = $('<label>').addClass('form-check-label').html(questionInfo.answer).attr({for:nameInput});
     // ajout des réponse à la div form check
     input.appendTo(divFormCheck);
@@ -138,6 +147,49 @@ app = {
     else {
       return 'badge-dark';
     }
+  },
+  
+  correction: function(evt) {
+    evt.preventDefault();
+    // je récupère l'ensemble des inputs et des labels
+    var allInput = $('.form-check-input');
+    var allLabel = $('.form-check-label');
+    var score = 0;
+
+    // je boucle sur tout les inputs
+    for (var index in allInput) {
+      // j'élimine les 4 premiers inputs qui sont les exemples de l'intégrations
+      if (index > 3) 
+      {
+        // je désactive les input pour "verrouiller" les réponses
+        $(allInput[index]).attr('disabled', true).addClass('d-none');
+        // je regarde si l'input à été coché
+        var checkInput = $(allInput[index]).prop('checked');
+        // s'il est coché
+        if (checkInput) 
+        {
+          // je récupère sa value 
+          // 0 = mauvaise réponse, 1 = bonne réponse
+          var valueInput = $(allInput[index]).val();
+          // si la réponse est correcte
+          if(valueInput === '1') 
+          {
+            // j'ajoute une couleur verte sur le bon label et j'incrémente le score
+            $(allLabel[index]).addClass('bg-success text-light px-1 rounded');
+            score++;
+          }
+          else 
+          {
+            // sinon j'ajoute une couleur rouge
+            $(allLabel[index]).addClass('bg-danger text-light px-1 rounded');
+          }
+        }
+      }
+    }
+
+    // pour finir j'affiche le score
+    var nbrQuestion = app.questionCpt - 1;
+    $('span.badge-pill').html('Score : '+ score + ' / '+ nbrQuestion +' questions');
   }
 };
 

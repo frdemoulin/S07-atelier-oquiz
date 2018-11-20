@@ -27,29 +27,29 @@
             <div class="p-3 question-answer-block">
 
                 <div class="form-check d-none">
-                    <input class="form-check-input d-none" type="radio" name="answer1" id="answer1" value="0">
-                    <label class="form-check-label d-none" for="answer1">
+                    <input class="form-check-input d-none" type="radio" name="question0" id="answer#1" value="0">
+                    <label class="form-check-label d-none" for="answer#1">
                             Lorem ipsum 
                     </label> 
                 </div>
 
                 <div class="form-check d-none">
-                    <input class="form-check-input d-none" type="radio" name="answer2" id="answer2" value="1">
-                    <label class="form-check-label d-none" for="answer2">
+                    <input class="form-check-input d-none" type="radio" name="question0" id="answer#2" value="1">
+                    <label class="form-check-label d-none" for="answer#2">
                             Lorem ipsum 
                     </label> 
                 </div>
 
                 <div class="form-check d-none">
-                    <input class="form-check-input d-none" type="radio" name="answer3" id="answer3" value="0">
-                    <label class="form-check-label d-none" for="answer3">
+                    <input class="form-check-input d-none" type="radio" name="question0" id="answer#3" value="0">
+                    <label class="form-check-label d-none" for="answer#3">
                             Lorem ipsum 
                     </label> 
                 </div>
 
                 <div class="form-check d-none">
-                    <input class="form-check-input d-none" type="radio" name="answer4" id="answer4" value="0">
-                    <label class="form-check-label d-none" for="answer4">
+                    <input class="form-check-input d-none" type="radio" name="question0" id="answer#4" value="0">
+                    <label class="form-check-label d-none" for="answer#4">
                             Lorem ipsum 
                     </label> 
                 </div>
