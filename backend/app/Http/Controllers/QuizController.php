@@ -330,36 +330,39 @@ class QuizController extends Controller
         /*
         [
             'id' => 'name',
+            'id' => 'name',
              ...
         ]
         */
         
-        /*
-         *****************************************
-         * méthode à la mano avec foreach / START
-         *****************************************
+        // /*
+        //  *****************************************
+        //  * méthode à la mano avec foreach / START
+        //  *****************************************
+        //  */
 
-        // on déclare le tableau à retourner en json
-        // il contiendra tous les tags présents dans la table tags
-        $tagsAllQuizzes = [];
-         // on sélectionne les champs id et name dans la table tags
-        $tagsInfo = Tags::select('id', 'name')->get();
-        //dd($tagsInfo);
+        // // on déclare le tableau à retourner en json
+        // // il contiendra tous les tags présents dans la table tags
+        // $tagsAllQuizzes = [];
+        //  // on sélectionne les champs id et name dans la table tags
+        // $tagsInfo = Tags::select('id', 'name')->get();
+        // //dd($tagsInfo);
         
-        // on pushe les infos des tags dans le tableau associatif $tagsAllQuizzes
-        // 'id' => 'name'
-        foreach ($tagsInfo as $currentTag) {
-            $currentTagId = $currentTag->id;
-            $currentTagName = $currentTag->name;
-            $tagsAllQuizzes[$currentTagId] = $currentTagName;
-        }
+        // // on pushe les infos des tags dans le tableau associatif $tagsAllQuizzes
+        // // 'id' => 'name'
+        // foreach ($tagsInfo as $currentTag) {
+        //     $currentTagId = $currentTag->id;
+        //     $currentTagName = $currentTag->name;
+        //     $tagsAllQuizzes[$currentTagId] = $currentTagName;
+        // }
         
-        return response()->json($tagsAllQuizzes); 
+        // return response()->json($tagsAllQuizzes); 
         
-        *****************************************
-         * END / méthode à la mano avec foreach
-         *****************************************
-        */
+        // /*
+        // *****************************************
+        //  * END / méthode à la mano avec foreach
+        //  *****************************************
+        // */
 
         // $tagsAllQuizzes est le tableau à retourner en json
         // il contiendra tous les tags présents dans la table tags
@@ -370,7 +373,7 @@ class QuizController extends Controller
 
         //dd($tagsAllQuizzes);
 
-        return response()->json($tagsAllQuizzes); 
+        return response()->json($tagsAllQuizzes);
         
     }
 

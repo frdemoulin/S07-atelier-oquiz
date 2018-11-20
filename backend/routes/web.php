@@ -104,9 +104,9 @@ $router->post('/signin', [
  * ACCOUNT
  */
 
-// route en GET associée au endpoint /account
+// route en GET associée au endpoint /account/[id]
 // page profil de l’utilisateur connecté
-$router->get('/account', [
+$router->get('/account/{id}', [
     'as' => 'account',
     'uses' => 'UserController@profile'
 ]);

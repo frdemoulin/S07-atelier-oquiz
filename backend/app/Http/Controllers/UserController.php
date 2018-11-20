@@ -30,6 +30,36 @@ class UserController extends Controller
     }
 
     /**
+     * méthode en GET associée au endpoint /account/[id]
+     * page profil de l’utilisateur connecté
+     * renvoie les info du user d'id donné
+     *
+     * @param Request $request
+     * @param string $id
+     * @return json
+     */
+    public function profile(Request $request, $id)
+    {
+        
+        // on récupère les infos en GET
+        //$id = $request->input('id');
+
+        // on lit en base les infos de l'user
+        $userInfo = AppUsers::select('firstname', 'lastname')
+                                ->where('id', $id)
+                                ->get();
+
+        //dd($userInfo);
+
+        //$firstname = $request->input('firstname');
+        //$lastname = $request->input('lastname');
+
+
+        // on redirige vers la page du compte utilisateur
+        return response()->json($userInfo);
+    }
+
+    /**
      * méthode en GET associée au endpoint /logout
      * traite la déconnexion d'un utilisateur
      *
