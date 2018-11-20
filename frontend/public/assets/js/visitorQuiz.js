@@ -1,16 +1,16 @@
-appVisitor = {
+app = {
   uri: '',
   idQuiz: '',
 
   init: function() {
-    appVisitor.uri = $('.container').data("uri");
-    appVisitor.idQuiz =  $('.quiz').data("id");
-    appVisitor.recoverQuiz();
+    app.uri = $('.container').data("uri");
+    app.idQuiz =  $('.quiz').data("id");
+    app.recoverQuiz();
   },
 
   recoverQuiz: function () {
     var jqxhr = $.ajax({
-      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/quiz/' + appVisitor.idQuiz,
+      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/quiz/' + app.idQuiz,
       method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
       dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
     });
@@ -23,11 +23,11 @@ appVisitor = {
          // si c'est le premier index
          if (index === '0') {
           // j'affiche les infos concernant le quizz
-          appVisitor.modifyHead(response[index], nbrQuestion);
+          app.modifyHead(response[index], nbrQuestion);
          }
          else {
            // je construit mon bloc réponse
-           var quizQuestion = appVisitor.constructQuestion(response[index]);
+           var quizQuestion = app.constructQuestion(response[index]);
            // et je l'ajoute au DOM
            $(quizQuestion).appendTo('.questions');
          }
@@ -58,7 +58,7 @@ appVisitor = {
     $(divQuestion).addClass('m-2');
     $(divQuestion).removeClass('d-none');
     // j'attribue une couleur en fonction du level de la question
-    var color = appVisitor.giveColor(questionInfo.level);
+    var color = app.giveColor(questionInfo.level);
     // je modifie le "badge" level de la question
     $($(divQuestion).find('span')).html(questionInfo.level).addClass(color);
     // je modifie la question
@@ -83,7 +83,7 @@ appVisitor = {
     allAnswer[answerIndex] = li ;
 
     // je mélange les réponse
-    var shuffle = appVisitor.shuffleArray(allAnswer);
+    var shuffle = app.shuffleArray(allAnswer);
     // j'ajoute chaque réponse au bloc réponse
     for ( var index in shuffle) {
       shuffle[index].appendTo(answer);
@@ -120,4 +120,4 @@ appVisitor = {
   }
 };
 
-$(appVisitor.init);
+$(app.init);

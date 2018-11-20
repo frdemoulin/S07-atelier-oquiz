@@ -1,20 +1,20 @@
-appUser = {
+app = {
   uri: '',
   idQuiz: '',
   idAnswer:1,
 
   init: function() {
     // je récupère ma base uri
-    appUser.uri = $('.container').data("uri");
+    app.uri = $('.container').data("uri");
     // et l'id du quiz cliqué
-    appUser.idQuiz =  $('.quiz').data("id");
+    app.idQuiz =  $('.quiz').data("id");
     // puis je lance ma requête ajax 
-    appUser.recoverQuiz();
+    app.recoverQuiz();
   },
 
   recoverQuiz: function () {
     var jqxhr = $.ajax({
-      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/quiz/' + appUser.idQuiz,
+      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/quiz/' + app.idQuiz,
       method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
       dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
     });
@@ -27,12 +27,12 @@ appUser = {
          // si c'est le premier index
          if (index === '0') {
            // j'affiche les infos concernant le quizz
-          appUser.modifyHead(response[index], nbrQuestion);
+          app.modifyHead(response[index], nbrQuestion);
          }
          // pour tout les autres index
          else {
            // je construit mon bloc réponse
-           var quizQuestion = appUser.constructQuestion(response[index]);
+           var quizQuestion = app.constructQuestion(response[index]);
            // et je l'ajoute au DOM
            $(quizQuestion).appendTo('.questions');
          }
@@ -61,7 +61,7 @@ appUser = {
     // je créer une div qui contiendra chaque élément de la question
     var divContainer = $('<div>').addClass('col-sm-3 border p-0 m-2');
     // j'attribue une couleur en fonction du level
-    var color = appUser.giveColor(questionInfo.level);
+    var color = app.giveColor(questionInfo.level);
     // je créer le "badge" level
     var spanBadge = $('<span>').addClass('badge float-right mt-2 mr-2').html(questionInfo.level);
     spanBadge.addClass(color);
@@ -75,8 +75,8 @@ appUser = {
     for (var index in questionInfo.badAnswer) 
     {
       // le nom doit être unique pour que chaque input ai un label associé
-      var nameInput = 'answer' + appUser.idAnswer;
-      appUser.idAnswer ++;
+      var nameInput = 'answer' + app.idAnswer;
+      app.idAnswer ++;
       var divFormCheck = $('<div>').addClass('form-check');
       var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput, value:0});
       var label = $('<label>').addClass('form-check-label').html(questionInfo.badAnswer[index]).attr({for:nameInput});
@@ -88,7 +88,7 @@ appUser = {
       answerIndex++;
     }
     // bonne réponse
-    var nameInput = 'answer' + appUser.idAnswer;
+    var nameInput = 'answer' + app.idAnswer;
     var divFormCheck = $('<div>').addClass('form-check');
     var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:nameInput, id:nameInput, value:1});
     var label = $('<label>').addClass('form-check-label').html(questionInfo.answer).attr({for:nameInput});
@@ -99,7 +99,7 @@ appUser = {
     allAnswer[answerIndex] = divFormCheck;
 
     // on mélange les réponses
-    var shuffle = appUser.shuffleArray(allAnswer);
+    var shuffle = app.shuffleArray(allAnswer);
     // avant de les ajouter à la div qui contient toutes les réponses
     for (var index in shuffle) 
     {
@@ -141,4 +141,4 @@ appUser = {
   }
 };
 
-$(appUser.init);
+$(app.init);

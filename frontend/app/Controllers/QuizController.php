@@ -23,6 +23,7 @@ class QuizController extends CoreController
 
     public function byTag($params) {
         $this->oTemplator->setVar('tagId',$params['id']);
+        $this->oTemplator->setVar('js','tags');
         $this->show('quizByTag');
     }
 }

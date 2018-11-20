@@ -1,9 +1,9 @@
-var appHome = {
+var app = {
   uri: '',
 
   init: function() {
-      appHome.uri = $('.container').data("uri");
-      appHome.recoverQuizList();
+      app.uri = $('.container').data("uri");
+      app.recoverQuizList();
   },
 
   recoverQuizList: function () {
@@ -15,7 +15,7 @@ var appHome = {
     // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
     jqxhr.done(function (response) {
       for ( var index in response) {
-        var divQuizz = appHome.constructQuiz(response[index]);
+        var divQuizz = app.constructQuiz(response[index]);
         $(divQuizz).appendTo('.lists');
       }
     });
@@ -27,7 +27,7 @@ var appHome = {
 
   constructQuiz: function(quiz) {
     // je construit le l'url de redirection
-     var urlQuiz = appHome.uri + '/quiz/' + quiz.id;
+     var urlQuiz = app.uri + '/quiz/' + quiz.id;
     // je clone la première liste
     var list = $('.lists div:first-child').clone();
     $(list).removeClass('d-none');
@@ -39,9 +39,9 @@ var appHome = {
     $(h5).html('');
     for ( var index in quiz.tags)
     {
-      var urlTag = appHome.uri + '/quiz-by-tag/' + quiz.tags[index].id;
+      var urlTag = app.uri + '/quiz-by-tag/' + quiz.tags[index].id;
       var btn = $('<a>').html(quiz.tags[index].name).addClass('text-light btn mr-2 px-2 py-1').attr('href', urlTag);
-      var color = appHome.giveColor(quiz.tags[index].id);
+      var color = app.giveColor(quiz.tags[index].id);
       btn.addClass(color);
       btn.appendTo(h5);
     }
@@ -50,7 +50,7 @@ var appHome = {
     $(h6).html(quiz.description);
     // contenu du p
     var p = $(list).find('p');
-    $(p).html(quiz.firstname + ' ' + quiz.lastname);
+    $(p).html('by ' + quiz.firstname + ' ' + quiz.lastname);
 
     return list;
   },
@@ -88,4 +88,4 @@ var appHome = {
     }
   }
 };
-$(appHome.init);
+$(app.init);
