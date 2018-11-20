@@ -81,16 +81,16 @@ app = {
     // je boucle sur mon tableau de mauvaise réponse que je stock dans une div
     for (var index in questionInfo.badAnswer) 
     {
-      // le nom doit être unique pour que chaque input ai un label associé
+      // l'id doit être unique pour que chaque input ai un label associé
       app.idAnswer ++;
       var nameInput = 'answer' + app.idAnswer;
       var divFormCheck = $('<div>').addClass('form-check');
       var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:questionNbr, id:nameInput, value:0});
       var label = $('<label>').addClass('form-check-label').html(questionInfo.badAnswer[index]).attr({for:nameInput});
-      // ajout des réponse à la div form check
+      // ajout des mauvaise réponse à la div form check
       input.appendTo(divFormCheck);
       label.appendTo(divFormCheck);
-      // ajout de la div form check au tableau des réponses
+      // ajout de la div form check au tableau qui contiendra TOUTE les réponses
       allAnswer[answerIndex] = divFormCheck;
       answerIndex++;
     }
@@ -101,13 +101,13 @@ app = {
     var divFormCheck = $('<div>').addClass('form-check');
     var input = $('<input>').addClass('form-check-input').attr({type:'radio', name:questionNbr, id:nameInput, value:1});
     var label = $('<label>').addClass('form-check-label').html(questionInfo.answer).attr({for:nameInput});
-    // ajout des réponse à la div form check
+    // ajout de la bonne réponse à la div form check
     input.appendTo(divFormCheck);
     label.appendTo(divFormCheck);
-    // ajout de la div form check au tableau des réponses
+    // ajout de la div form check au tableau qui contiendra TOUTE les réponses
     allAnswer[answerIndex] = divFormCheck;
 
-    // on mélange les réponses
+    // on mélange les réponses pour que la bonne ne soit pas toujours en dernière position
     var shuffle = app.shuffleArray(allAnswer);
     // avant de les ajouter à la div qui contient toutes les réponses
     for (var index in shuffle) 
@@ -122,7 +122,7 @@ app = {
     return divContainer;
   },
 
-  // Permet de mélanger les réponses
+  // Permet de mélanger un tableau
   shuffleArray: function(array) {
     for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -162,34 +162,35 @@ app = {
       if (index > 3) 
       {
         // je désactive les input pour "verrouiller" les réponses
-        $(allInput[index]).attr('disabled', true).addClass('d-none');
-        // je regarde si l'input à été coché
+        $(allInput[index]).attr('disabled', true);
+        // je récupère la value de chaque input
+        var answer = $(allInput[index]).val();
+        // si c'est la bonne réponse j'affiche son label en vert
+        if (answer === '1')
+        {
+          $(allLabel[index]).addClass('text-success');
+        }
+        // je regarde si l'input à été coché par l'user
         var checkInput = $(allInput[index]).prop('checked');
         // s'il est coché
         if (checkInput) 
         {
-          // je récupère sa value 
-          // 0 = mauvaise réponse, 1 = bonne réponse
-          var valueInput = $(allInput[index]).val();
-          // si la réponse est correcte
-          if(valueInput === '1') 
+          // si la réponse est correcte j'incrémente le score
+          if(answer === '1') 
           {
-            // j'ajoute une couleur verte sur le bon label et j'incrémente le score
-            $(allLabel[index]).addClass('bg-success text-light px-1 rounded');
             score++;
           }
           else 
           {
-            // sinon j'ajoute une couleur rouge
-            $(allLabel[index]).addClass('bg-danger text-light px-1 rounded');
+            // sinon je met le texte en rouge
+            $(allLabel[index]).addClass('text-danger');
           }
         }
       }
     }
-
     // pour finir j'affiche le score
     var nbrQuestion = app.questionCpt - 1;
-    $('span.badge-pill').html('Score : '+ score + ' / '+ nbrQuestion +' questions');
+    $('span.badge-pill').html('Score : '+ score +'/'+ nbrQuestion);
   }
 };
 

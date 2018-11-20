@@ -10,7 +10,7 @@ var app = {
     handleCheckForm: function(evt) {
       evt.preventDefault();
       app.clearError();
-      // je récupère les contenu des formulaire en retirant les espaces
+      // je récupère les contenu du formulaire en retirant les espaces
       var data = {
         'lastname': $.trim($($(evt.target).find('.last-name')).val()),
         'firstname': $.trim($($(evt.target).find('.first-name')).val()),
@@ -20,7 +20,6 @@ var app = {
       };
       // par défaut je considère que des valeurs on été mis dans chaque input
       var notEmpty = true;
-
       // je vérifie qu'aucun input n'est vide
       for ( var index in data) 
       {
@@ -30,12 +29,10 @@ var app = {
         {
           var textError = 'Vous ne pouvez pas laisser le champ '+ index +' vide.';
           var error = $('<div>').addClass('mx-auto my-2 border text-light bg-danger rounded p-2 error').html(textError);
-          
-          // j'ajoute le message au formulaire
           error.appendTo(evt.target);
           notEmpty = false;
         }
-        }
+      }
         // si notEmpty = true, alors aucun input n'était vide
         if (notEmpty) 
         {
@@ -91,16 +88,21 @@ var app = {
     },
   
     displaySuccess: function() {
-      // je cache le formulaires
+      // je cache le formulaire
       $('form').addClass('d-none');
-      // j'ajoute un message de redirection vers la page mon compte
+      // je cible mon container
       var container = $('.container');
+      // création d'une div qui contiendra le message
       var div = $('<div>').addClass('row mx-auto col-11 my-3 border bg-light rounded py-2');
+      // assemblage de l'url
       var url = 'http://localhost'+ app.uri +'/mon-compte';
+      // création du lien de redirection
       var a = $('<a>').html('Mon compte.').attr('href', url).addClass('alert-link');
+      // message
       var text = 'Vous êtes à présent connecté.'
       text += '<br/>Vous pouvez désormais acceder à votre page : ';
       var p = $('<p>').html(text);
+      // ajout des lien et texte dans la div puis dans le container
       a.appendTo(p);
       p.appendTo(div);
       div.appendTo(container);
@@ -115,6 +117,7 @@ var app = {
       var liDisconnect = '<li class="nav-item">\
       <a class="nav-link text-blue" href="http://localhost'+ app.uri +'/connexion?disconnect=1">Deconnexion</a>\
       </li>';
+      // et les ajoutes au dom
       $(liAccount).appendTo($('ul.nav-pills'));
       $(liDisconnect).appendTo($('ul.nav-pills'));
     },

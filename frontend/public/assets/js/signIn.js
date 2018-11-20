@@ -72,14 +72,19 @@ var app = {
   displaySuccess: function() {
     // je cache le formulaires
     $('form').addClass('d-none');
-    // j'ajoute un message de redirection vers la page mon compte
+
     var container = $('.container');
+    // je créer la div qui contient mon message
     var div = $('<div>').addClass('row mx-auto col-11 my-3 border bg-light rounded py-2');
+    // je met en forme l'url
     var url = 'http://localhost'+ app.uri +'/mon-compte';
+    // je créer le lien
     var a = $('<a>').html('Mon compte.').attr('href', url).addClass('alert-link');
+    // + le texte
     var text = 'Vous êtes à présent connecté.'
     text += '<br/>Vous pouvez désormais acceder à votre page : ';
     var p = $('<p>').html(text);
+    // j'assemble mes balise et ajoute le tout dans le container
     a.appendTo(p);
     p.appendTo(div);
     div.appendTo(container);

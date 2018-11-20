@@ -8,7 +8,7 @@
             </div>
             <div class="form-group">
                 <label>Mot de passe</label>
-                <input type="password" class="form-control password" placeholder="Password">
+                <input type="password" class="form-control password" placeholder="mot de passe">
             </div>
             <div class="form-group justify-content-center"> 
                 <span>Pas encore inscrit ? </span>

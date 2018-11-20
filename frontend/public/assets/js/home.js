@@ -16,7 +16,9 @@ var app = {
     // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
     jqxhr.done(function (response) {
       for ( var index in response) {
+        // je construit mes div quizz
         var divQuizz = app.constructQuiz(response[index]);
+        // je les ajoutes dans la liste
         $(divQuizz).appendTo('.lists');
       }
     });
@@ -35,7 +37,9 @@ var app = {
     // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
     jqxhr.done(function (response) {
       for ( var index in response) {
+        // je construit mes li de sujet
         var tag = app.constructTag(index, response[index]);
+        // je les ajoutes au ul
         $(tag).appendTo('ul.category-aside');
       }
     });
@@ -57,12 +61,17 @@ var app = {
     // contenu du h5
     var h5 = $(list).find('h5');
     $(h5).html('');
+    // pour chaque sujet 
     for ( var index in quiz.tags)
     {
+      // je construit son url
       var urlTag = app.uri + '/quiz-by-tag/' + quiz.tags[index].id;
+      // je créer le lien
       var btn = $('<a>').html(quiz.tags[index].name).addClass('text-light btn mr-2 mb-2 px-2 py-1').attr('href', urlTag);
+      // lui attribut une couleur
       var color = app.giveColor(quiz.tags[index].id);
       btn.addClass(color);
+      // et l'ajoute au h5
       btn.appendTo(h5);
     }
     // contenu du h6
@@ -76,11 +85,14 @@ var app = {
   },
 
   constructTag: function(id, name) {
+    // je construit l'url du sujet
     var urlTag = app.uri + '/quiz-by-tag/' + id;
+    // créer un li et un lien
     var li = $('<li>').addClass('list-group-item');
     var a = $('<a>').attr('href', urlTag).html(name);
-
+    // ajoute le lien dans le li
     a.appendTo(li);
+
     return li;
   },
 
