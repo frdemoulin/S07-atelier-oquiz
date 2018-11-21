@@ -11,12 +11,6 @@ use App\Tags;
 use App\AppUsers;
 use App\QuizzesHasTags;
 
-/*
- Pour utiliser / recuperer l'objet Request, on doit obligatoirement importer cette classe Lumen
-*/
-
-use Illuminate\Http\Request;
-
 class MainController extends Controller
 {
     /**
@@ -33,13 +27,16 @@ class MainController extends Controller
      * route en get associée au endpoint /
      * affichage de tous les quiz
      *
-     * @param Request $request
      * @return json
      */
-    public function displayHome(Request $request)
+    public function displayHome()
     {
         $arrayQuizzes = [];
         $quizzesList = Quizzes::all();
+
+        // $authorList = AppUsers::select('firstname', 'lastname')
+        // ->join('quizzes', 'app_users.id', '=', 'quizzes.app_users_id')
+        // ->orderBy('quizzes.id', 'asc');
 
         $authorList = DB::select("SELECT firstname, lastname
         FROM app_users
@@ -48,15 +45,15 @@ class MainController extends Controller
         ORDER BY quizzes.id ASC
         ");
 
-        //dump($authorList);
-        //dump($quizzesList);
+        //dd($authorList);
+        //dd($quizzesList);
 
         foreach ($quizzesList as $key => $quiz):
 
-            $quizId = $request->input('id', $quiz->id);
-            $quizTitle = $request->input('title', $quiz->title);
-            $quizDescription = $request->input('description', $quiz->description);
-            $quizAppUsersId = $request->input('app_users_id', $quiz->app_users_id);
+            $quizId = $quiz->id;
+            $quizTitle = $quiz->title;
+            $quizDescription = $quiz->description;
+            $quizAppUsersId = $quiz->app_users_id;
             $authorFirstname = $authorList[$key]->firstname;
             $authorLastname = $authorList[$key]->lastname;
 
