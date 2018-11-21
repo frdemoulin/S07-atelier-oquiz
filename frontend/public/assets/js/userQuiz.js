@@ -1,5 +1,6 @@
 app = {
   uri: '',
+  uriBack: '',
   idQuiz: '',
   idAnswer:0,
   questionCpt: 1,
@@ -7,6 +8,7 @@ app = {
   init: function() {
     // je récupère ma base uri
     app.uri = $('.container').data('uri');
+    app.uriBack = $('.container').data('back');
     // et l'id du quiz cliqué
     app.idQuiz =  $('.quiz').data('id');
     // puis je lance ma requête ajax 
@@ -16,7 +18,7 @@ app = {
 
   recoverQuiz: function () {
     var jqxhr = $.ajax({
-      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/quiz/' + app.idQuiz,
+      url: 'http://localhost'+ app.uriBack +'/quiz/' + app.idQuiz,
       method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
       dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
     });
