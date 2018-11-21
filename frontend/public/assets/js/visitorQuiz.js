@@ -1,16 +1,18 @@
 app = {
   uri: '',
+  uriBack: '',
   idQuiz: '',
 
   init: function() {
     app.uri = $('.container').data('uri');
+    app.uriBack = $('.container').data('back');
     app.idQuiz =  $('.quiz').data('id');
     app.recoverQuiz();
   },
 
   recoverQuiz: function () {
     var jqxhr = $.ajax({
-      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/quiz/' + app.idQuiz,
+      url: 'http://localhost'+ app.uriBack +'/quiz/' + app.idQuiz,
       method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
       dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
     });

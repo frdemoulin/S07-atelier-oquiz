@@ -1,15 +1,18 @@
 var app = {
   uri: '',
+  uriBack: '',
 
   init: function() {
       app.uri = $('.container').data('uri');
+      app.uriBack = $('.container').data('back');
+      console.log(app.uriBack);
       app.recoverQuizList();
       app.recoverTagList();
   },
 
   recoverQuizList: function () {
     var jqxhr = $.ajax({
-      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/',
+      url: 'http://localhost'+ app.uriBack +'/',
       method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
       dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
     });
@@ -30,7 +33,7 @@ var app = {
 
   recoverTagList: function() {
     var jqxhr = $.ajax({
-      url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/tags', 
+      url: 'http://localhost'+ app.uriBack +'/tags', 
       method: 'GET', // La méthode HTTP souhaité pour l'appel Ajax (GET ou POST)
       dataType: 'json', // Le type de données attendu en réponse (text, html, xml, json)
     });

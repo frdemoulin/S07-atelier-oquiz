@@ -1,9 +1,11 @@
 var app = {
     uri: '',
+    uriBack: '',
   
     init: function() {
       // je récupère ma base uri
       app.uri = $('.container').data('uri');
+      app.uriBack = $('.container').data('back');
       $('form').on('submit', app.handleCheckForm);
     },
   
@@ -55,7 +57,7 @@ var app = {
     },
     dataRequest: function(dataValue) {
       var jqxhr = $.ajax({
-        url: 'http://localhost/S07/S07-atelier-oquiz/backend/public/signup', 
+        url: 'http://localhost'+ app.uriBack +'/public/signup', 
         method: 'POST',
         dataType: 'json',
         data: {
