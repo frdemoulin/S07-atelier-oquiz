@@ -108,6 +108,10 @@ class UserController extends Controller
         //dd($email);
         //dd($passwordClair);
 
+        // trim supprime les espace en debut et fin de chaine pour eviter un espace problematique lors de la saisie du mot de passe ou de l'email
+        $email = trim($email);
+        $passwordClair = trim($passwordClair);
+
         /*
         **************************
         * CONTROLE INTEGRITE FORM
@@ -190,6 +194,12 @@ class UserController extends Controller
         $lastname = $request->input('lastname');
         //dump($lastname);
 
+        // trim des datas du form
+        $email = trim($email);
+        $passwordClair = trim($passwordClair);
+        $firstname = trim($firstname);
+        $lastname = trim($lastname);
+
         /*
         **************************
         * CONTROLE INTEGRITE FORM
@@ -257,7 +267,7 @@ class UserController extends Controller
                     $success = true;
                     $msg = '';
 
-                    // on ouvre alors la session
+                    // on ouvre alors une session
                     session_start();
                     $_SESSION['userId'] = $user->id;
                     //exit($success);
