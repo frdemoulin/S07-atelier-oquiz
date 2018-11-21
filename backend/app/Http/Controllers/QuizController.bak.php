@@ -14,6 +14,13 @@ use App\Quizzes;
 use App\QuizzesHasTags;
 use App\Tags;
 
+// import de la classe Request (objet Lumen)
+use Illuminate\Http\Request;
+
+// import de la classe Collection (méthode collect())
+// https://laravel.com/docs/5.1/collections#available-methods
+// use Illuminate\Support\Collection;
+
 class QuizController extends Controller
 {
     /**
@@ -32,10 +39,11 @@ class QuizController extends Controller
      * méthode en GET associée au endpoint /tags/[id]/quiz
      * liste tous les quiz associés au tag d'id donné
      *
+     * @param Request $request
      * @param string $id
      * @return json
      */
-    public function listByTag($id)
+    public function listByTag(Request $request, $id)
     {
         // format retour json attendu
         /*
@@ -103,10 +111,11 @@ class QuizController extends Controller
      * route en GET associée au endpoint /quiz/[id]
      * affichage du quiz d'id donné
      *
+     * @param Request $request
      * @param string $id
      * @return json
      */
-    public function quiz($id)
+    public function quiz(Request $request, $id)
     {
         // format retour json attendu
         /*
@@ -149,14 +158,13 @@ class QuizController extends Controller
 
         // on sélectionne le quiz d'id passé en paramètre de l'url
         $quizInfo = Quizzes::find($id);
-        //dd($quizInfo);
-        $quizId = $id;
-        //dump($quizId);
-        $quizTitle = $quizInfo['title'];
-        //dump($quizTitle);
-        $quizDescription = $quizInfo['description'];
+        $quizId = $id; //$request->input('id', $quizInfo->id);
+        // dump($quizId);
+        $quizTitle = $request->input('title', $quizInfo->title);
+        // dump($quizTitle);
+        $quizDescription = $request->input('description', $quizInfo->description);
         // dd($quizDescription);
-        $quizAppUsersId = $quizInfo['app_users_id'];
+        $quizAppUsersId = $request->input('app_users_id', $quizInfo->app_users_id);
         //dd($quizAppUsersId);
 
         //dd($quizInfo);
@@ -232,11 +240,11 @@ class QuizController extends Controller
 
         foreach ($questionsInfo as $key => $value):
 
-            $questionId = $value->id;
-            $questionQuestion = $value->question;
-            $quizAnecdote = $value->anecdote;
-            $quizLevelId = $value->levels_id;
-            $questionAnswerId = $value->answers_id;
+            $questionId = $request->input('id', $value->id);
+            $questionQuestion = $request->input('question', $value->question);
+            $quizAnecdote = $request->input('anecdote', $value->anecdote);
+            $quizLevelId = $request->input('levels_id', $value->levels_id);
+            $questionAnswerId = $request->input('answers_id', $value->answers_id);
 
             /*
             ********************
