@@ -37,13 +37,6 @@ $router->get('/quiz/{id}', [
     'uses' => 'QuizController@quiz'
 ]);
 
-// route en POST associée au endpoint /quiz/[id]
-// affichage du quiz d'id donné
-$router->post('/quiz/{id}', [
-    'as' => 'quiz_post',
-    'uses' => 'QuizController@quizPost'
-]);
-
 // route en GET associée au endpoint /tags
 // affichage de tous les tags (sujets de quiz)
 $router->get('/tags', [

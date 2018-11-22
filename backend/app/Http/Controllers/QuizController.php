@@ -303,24 +303,6 @@ class QuizController extends Controller
     }
 
     /**
-     * route en POST associée au endpoint /quiz/[id]
-     * traitement du formulaire du quiz soumis et affichage des bonnes réponses, scores, etc
-     *
-     * @param Request $request
-     * @param string $id
-     * @return json
-     */
-    public function quizPost(Request $request, $id)
-    {
-        // exemple de récupération de champs passés en POST
-        // on peut utiliser une valeur en 2e paramètre qui sera retournée par défaut si l'input côté form est envoyé à vide
-        // $name = $request->input('name', '');
-        // $editor = $request->input('editor', '');
-        // $release = $request->input('release_date', '');
-        // $platformId = $request->input('platform_id', '');
-    }
-
-    /**
      * méthode associée au endpoint /tags
      * liste tous les tags
      *
