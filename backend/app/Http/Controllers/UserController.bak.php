@@ -75,6 +75,63 @@ class UserController extends Controller
     }
 
     /**
+     * -------------------------
+     * BACKUP METHODE PROFILE()
+     * -------------------------
+     * méthode en GET associée au endpoint /account
+     * page profil de l’utilisateur connecté
+     * renvoie firstname et lastname du user connecté d'id donné
+     * l'id est récupéré en session
+     *
+     * @return json
+     */
+
+    // public function profile()
+    // {   
+    //     // array réponse à encoder en json
+    //     $userResponse = [];
+    //     // nom, prenom, id, role_id
+    //     // initialisation des variables flash
+    //     $success = false;
+    //     $msg = '';
+
+    //     // si l'id user est présent en session, on le transmet en retour avec firstname et lastname
+    //     if (isset($_SESSION['userId']) && !empty($_SESSION['userId'])) {
+    //         $success = true;
+    //         $id = $_SESSION['userId'];
+
+    //         // on lit en base firstname et lastname de l'user
+    //         $userInfo = AppUsers::select('firstname', 'lastname')
+    //         ->where('id', $id)
+    //         ->get();
+            
+    //         $firstname = $userInfo[0]->firstname;
+    //         //dump($firstname);
+    //         $lastname = $userInfo[0]->lastname;
+    //         //dump($latname);
+
+    //         $userResponse = [
+    //             'success' => $success,
+    //             'firstname' => $firstname,
+    //             'lastname' => $lastname
+    //         ];
+
+    //     return response()->json($userResponse);
+
+    //     } else {
+    //         // l'id de l'user n'est pas en session
+    //         $msg = 'id user non défini en session';
+
+    //         $userResponse = [
+    //             'success' => $success,
+    //             'msg' => $msg
+    //         ];
+
+    //         return response()->json($userResponse);
+    //     }
+    // }
+
+    /**
      * méthode en GET associée au endpoint /signin
      * traite le formulaire de connexion
      *
@@ -134,11 +191,9 @@ class UserController extends Controller
             } elseif ($userCount == 1) {
                 
                 // on lit en base les infos de l'user dont l'email a été trouvé
-                $userInfo = AppUsers::select('app_users.id', 'email', 'password', 'firstname', 'lastname', 'roles_id', 'roles.name')
+                $userInfo = AppUsers::select('id', 'email', 'password')
                 ->where('email', $email)
-                ->join('roles', 'roles.id', 'app_users.roles_id')
                 ->get();
-                //dd($userInfo);
                 // on récupère le hash du password présent en bdd
                 $passwordHashBdd = $userInfo[0]->password;
                 //dd($passwordHashBdd);
@@ -146,19 +201,9 @@ class UserController extends Controller
                 // on teste le hash
                 if(password_verify($passwordClair, $passwordHashBdd)) {
                 $success = true;
-                
-                // on stocke en session les infos de l'user
-                $_SESSION['user'] = [
-                    'id' => $userInfo[0]->id,
-                    'firstname' => $userInfo[0]->firstname,
-                    'lastname' => $userInfo[0]->lastname,
-                    'role' => [
-                        'id' => $userInfo[0]->roles_id,
-                        'name' => $userInfo[0]->name
-                    ]
-                ];
 
-                //dd($_SESSION);
+                $_SESSION['userId'] = $userInfo[0]->id;
+                //dd($_SESSION['userId']);
                 $msg = '';
                 //dd($success);
                 } else {

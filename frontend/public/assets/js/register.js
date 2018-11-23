@@ -57,7 +57,7 @@ var app = {
     },
     dataRequest: function(dataValue) {
       var jqxhr = $.ajax({
-        url: 'http://localhost'+ app.uriBack +'/public/signup', 
+        url: 'http://localhost'+ app.uriBack +'/signup', 
         method: 'POST',
         dataType: 'json',
         data: {
