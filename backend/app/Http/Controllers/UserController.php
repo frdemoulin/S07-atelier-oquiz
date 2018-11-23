@@ -29,54 +29,10 @@ class UserController extends Controller
         //
     }
 
-    public function profile()
-    {   
-        // array réponse à encoder en json
-        $userResponse = [];
-        // id, firstname, lastname, roles_id
-        // initialisation des variables flash
-        $success = false;
-        $msg = '';
-
-        // si l'id user est présent en session, on le transmet en retour avec firstname et lastname
-        if (isset($_SESSION['userId']) && !empty($_SESSION['userId'])) {
-            $success = true;
-            $id = $_SESSION['userId'];
-
-            // on lit en base firstname et lastname de l'user
-            $userInfo = AppUsers::select('firstname', 'lastname', 'role_id')
-            ->where('id', $id)
-            ->get();
-            
-            $firstname = $userInfo[0]->firstname;
-            //dump($firstname);
-            $lastname = $userInfo[0]->lastname;
-            //dump($latname);
-
-            $userResponse = [
-                'success' => $success,
-                'firstname' => $firstname,
-                'lastname' => $lastname
-            ];
-
-        return response()->json($userResponse);
-
-        } else {
-            // l'id de l'user n'est pas en session
-            $msg = 'id user non défini en session';
-
-            $userResponse = [
-                'success' => $success,
-                'msg' => $msg
-            ];
-
-            return response()->json($userResponse);
-        }
-    }
-
     /**
      * méthode en GET associée au endpoint /signin
      * traite le formulaire de connexion
+     * une fois connecté, on passe en session : id, firstname, lastname, roles_id
      *
      * @param Request $request
      * @return json
@@ -200,6 +156,7 @@ class UserController extends Controller
         // trim des datas du form
         $email = trim($email);
         $passwordClair = trim($passwordClair);
+        $passwordClairConfirm = trim($passwordClairConfirm);
         $firstname = trim($firstname);
         $lastname = trim($lastname);
 
@@ -212,7 +169,7 @@ class UserController extends Controller
         $msg ='';
         $success = false;
         // Si au moins un champ est vide, on stocke un message d'erreur
-        if(empty($email) || empty($passwordClair) || empty($firstname) || empty($lastname)) {
+        if(empty($email) || empty($passwordClair) || empty($passwordClairConfirm) || empty($firstname) || empty($lastname)) {
             $msg = 'Les champs du formulaire ne peuvent pas être vides';
             //exit($msg);
         } else { // Si les champs sont tous remplis
@@ -243,35 +200,59 @@ class UserController extends Controller
                     //exit($msg);
                 } else {
                     // les saisies des deux mots de passe sont identiques
+                    
+                    /*
+                    *******************************
+                    * ENVOI MAIL VALIDATION COMPTE
+                    *******************************
+                    */
+                    
+                    // les champs du signup sont valides
+                    // on envoie à l'utilisateur un mail de validation de son compte
+
+                    // on génère un jeton de validation (chaîne aléatoire de 64 caractères)
+                    $token = bin2hex(random_bytes(32));
+                    
                     // on hache alors le mot de passe
                     $passwordHash = password_hash($passwordClair, PASSWORD_DEFAULT);
                     //dd($passwordHash);
-                    
-                    /*
-                    **************************
-                    * AJOUT USER EN BASE
-                    **************************
-                    */
 
-                    // on instancie un nouveau model AppUsers
-                    $user = new AppUsers();
-
-                    // on renseigne les infos du user dans le model
-                    $user->email = $email;
-                    $user->password = $passwordHash;
-                    $user->firstname = $firstname;
-                    $user->lastname = $lastname;
-                    $user->status = 1;
-                    //dd($user);
+                    // on insère l'user en base avec un status de 0 (valeur par défaut)
+                    // son status passera à 1 une fois l'inscription validée
+                    // la méthode insertGetId() insère l'user en base et renvoie son id 
+                    $newUser = AppUsers::insertGetId([
+                        'email' => $email,
+                        'password' => $passwordHash,
+                        'firstname' => $firstname,
+                        'lastname' => $lastname,
+                        'token' => $token
+                    ]);
                     
-                    // on save en bdd
-                    $user->save();
+                    dd($newUser);
+
+                    $newUserId = $newUser[0]->id;
+
+                    // on génère l'url de réinitialisation du mot de passe
+                    $link = 'http://frederic-demoulin.vpnuser.oclock.io/S07/blog/public/reset-password?id='.$newUserId.'&token='.$token;
+                    // on envoie le mail de réinitialisation de mot de passe à l'utilisateur
+                    // fonction native mail(arg1, arg2, arg3, arg4)
+                    // doc : http://php.net/manual/fr/function.mail.php
+                    // arg1 : adresse e-mail
+                    $to = $user['email'];
+                    // arg2 : sujet de l'e-mail
+                    $emailSubject = 'Réinitialisation de votre mot de passe';
+                    // arg3 : contenu de l'e-mail
+                    $emailContent = '<html><head></head><body>Bonjour ' . $user['login'] . ',<br/>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :<br/>' . $link . '</body></html>';
+                    // arg4 optionnel : headers
+                    $headers  = 'MIME-Version: 1.0' . "\r\n";
+                    $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+                    mail($to, $emailSubject, $emailContent, $headers);
                     
                     $success = true;
                     $msg = '';
 
                     // on ouvre alors une session
-                    $_SESSION['userId'] = $user->id;
+                    //$_SESSION['userId'] = $user->id;
                     //exit($success);
                 }
             }
