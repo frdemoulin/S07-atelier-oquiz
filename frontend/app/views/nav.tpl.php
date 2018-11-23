@@ -16,14 +16,15 @@
             </a>
         </li>
 
-<?php if (!empty($_SESSION['userId'])) : ?>
-        <li class="nav-item">
-            <a class="nav-link text-blue" href="<?= $this->router->generate('account');?>">
-                <i class="fas fa-user"></i>
-                Mon compte
-            </a>
-        </li>
-
+<?php if (!empty($this->var['user'])) : ?>
+        <?php if ($this->var['user']['role']['id'] === 2) : ?>
+            <li class="nav-item">
+                <a class="nav-link text-blue" href="<?= $this->router->generate('account');?>">
+                    <i class="fas fa-user"></i>
+                    Mon compte
+                </a>
+            </li>
+        <? endif;?>
         <li class="nav-item">
             <a class="nav-link text-blue" href="<?= $this->router->generate('signIn');?>?disconnect=1">
                 <i class="fas fa-sign-out-alt"></i>

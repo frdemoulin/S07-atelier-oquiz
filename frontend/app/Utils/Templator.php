@@ -1,5 +1,6 @@
 <?php
-namespace oQuiz\Templator;
+
+namespace oQuiz\Utils;
 
 class Templator {
     private $absolutWay;

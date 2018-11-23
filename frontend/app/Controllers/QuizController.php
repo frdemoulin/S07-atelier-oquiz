@@ -1,6 +1,7 @@
 <?php
 namespace oQuiz\Controllers;
-use oQuiz\Templator\Templator;
+use oQuiz\Utils\Templator;
+use oQuiz\Utils\UserSession;
 
 
 class QuizController extends CoreController
@@ -9,15 +10,16 @@ class QuizController extends CoreController
 
         $this->oTemplator->setVar('quizId',$params['id']);
 
-        if(empty($_SESSION['userId'])) 
-        {
-             $this->oTemplator->setVar('js','visitorQuiz');
-            $this->show('visitorQuiz');
-        }
-        else 
+        if(UserSession::isConnected()) 
         {
             $this->oTemplator->setVar('js','userQuiz');
             $this->show('userQuiz');
+        }
+        else 
+        {
+            $this->oTemplator->setVar('js','visitorQuiz');
+            $this->show('visitorQuiz');
+
         }
     }
 

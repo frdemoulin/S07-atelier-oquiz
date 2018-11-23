@@ -1,6 +1,7 @@
 <?php
 namespace oQuiz\Controllers;
-use oQuiz\Templator\Templator;
+use oQuiz\Utils\Templator;
+use oQuiz\Utils\UserSession;
 
 
 class MainController extends CoreController
@@ -11,40 +12,29 @@ class MainController extends CoreController
     }
 
     public function signIn() {
-        if(!empty($_SESSION['userId'])) 
-        {
-            $this->show('account');
-        }
-        else 
-        {
-            $this->oTemplator->setVar('js', 'signIn');
-            $this->show('signIn');
-        }
+        $this->isAuthorized('alreadyConnect');
+
+        $this->oTemplator->setVar('js', 'signIn');
+        $this->show('signIn');
+        
     }
 
     public function register() {
-        if(!empty($_SESSION['userId'])) 
-        {
-            $this->show('account');
-        }
-        else 
-        {
-            $this->oTemplator->setVar('js', 'register');
-            $this->show('register');
-        }
+        $this->isAuthorized('alreadyConnect');
+
+        $this->oTemplator->setVar('js', 'register');
+        $this->show('register');
+        
     }
 
     public function account() {
-        if(!empty($_SESSION['userId'])) 
-        {
-            $this->oTemplator->setVar('js', 'account');
-            $this->show('account');
-        }
-        else 
-        {
-            $this->oTemplator->setVar('js', 'signIn');
-            $this->show('signIn');
-        }
+        $this->isAuthorized('isDisconnect');
+        $this->isAuthorized('notAdmin');
+
+        $this->oTemplator->setVar('js', 'admin');
+
+        $this->show('admin');
+        
     }
 
     public function error404() {
