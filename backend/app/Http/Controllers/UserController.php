@@ -466,4 +466,87 @@ class UserController extends Controller
         return response()->json($jsonArray);
     }
 
+    /**
+     * méthode en GET associée au endpoint /reset-password
+     * traite le formulaire de réinitialisation d'un nouveau mot de passe
+     *
+     * @param Request $request
+     * @return json
+     */
+
+    public function resetPassword(Request $req) {
+        
+        $msg = '';
+        $success = false;
+        //dd($req);
+
+        // on récupère les valeurs des paramètres d'URL
+        $id = $req->input('id', '');
+        //dump($id);
+        $token = $req->input('token', '');
+        //dump($token);
+
+        // on récupère les valeurs des inputs password
+        $password = $req->input('password', '');
+        $passwordConfirm = $req->input('password_confirm', '');
+
+        // suppression des espaces
+        $password = trim($password);
+        $passwordConfirm = trim($passwordConfirm);
+
+        /**
+         * *************************
+         * GESTION INTEGRITE DONNEES
+         * *************************
+         */
+
+        // si le password est vide
+        if(empty($password)){
+
+            $msg = 'Vous devez saisir un mot de passe';
+
+            // si l'adresse email est remplie, on vérifie si son format est valide
+        } elseif(empty($passwordConfirm)) {
+            
+            $msg = 'Vous devez saisir à nouveau votre mot de passe';
+
+            // sinon on teste la longueur des mots de passe
+        } elseif(strcmp($password, $passwordConfirm) !== 0) {
+            // sinon on compare les deux mots de passe
+            $msg = 'Les deux mots de passe doivent être identiques';
+        
+        } else {
+            // les mots de passe saisis sont valides et coïncident
+
+            $user = AppUsers::where([
+                ['id', $id],
+                ['token', $token]
+                ])->get()->first();
+            //dd($user);
+        
+            if(is_null($user)){
+                // la correspondance id - token n'a pas été trouvée en base
+                $msg = 'Le lien de réinitialisation du mot de passe n\'est pas valide';
+            } else {
+                // on hache le nouveau mot de passe
+                $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
+                // on le stocke en bdd
+                $update = AppUsers::where('id', $id)
+                            ->update(['password' => $passwordHash]);
+                
+                $success = true;
+                $msg = '';                
+            }
+        }
+
+        $jsonArray = [
+            'success' => $success,
+            'msg' => $msg
+        ];
+
+        // on retourne un json
+        return response()->json($jsonArray);
+    }
+
 }
