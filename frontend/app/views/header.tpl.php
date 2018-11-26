@@ -24,6 +24,5 @@
         <title>O'Quiz</title>
     </head>
     <body>
-        <?php dump($this->var); ?>
         <main class="container" data-uri="<?= $_SERVER['BASE_URI'];?>" data-back="/S07/S07-atelier-oquiz/backend/public">
         <?php $this->includeOne('nav'); ?>

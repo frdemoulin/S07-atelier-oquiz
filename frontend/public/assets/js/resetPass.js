@@ -11,7 +11,6 @@ var app = {
 
     handleCheckForm: function(evt) {
         evt.preventDefault();
-        console.log('check form');
 
         var password = $.trim($('.password').val());
         var passConfirm = $.trim($('.password-confirm').val());
@@ -38,7 +37,6 @@ var app = {
             div.appendTo('form');
         }
         else{
-            console.log('resetPassword');
             app.resetPassword(password, passConfirm, id, token);
         }
     },
@@ -56,7 +54,6 @@ var app = {
             }
           });
           jqxhr.done(function (response) {
-            console.log(response);
               // si success = true
               if (response.success) 
               {

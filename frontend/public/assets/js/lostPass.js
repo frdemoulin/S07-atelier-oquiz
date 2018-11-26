@@ -28,7 +28,6 @@ var app = {
     },
 
     sendMail: function(emailUser) {
-        console.log('in send mail');
         var jqxhr = $.ajax({
           url: 'http://localhost'+ app.uriBack +'/lost-password', 
           method: 'POST',
