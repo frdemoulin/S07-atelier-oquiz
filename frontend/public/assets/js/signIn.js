@@ -72,36 +72,24 @@ var app = {
   },
 
   displaySuccess: function() {
-    // je cache le formulaires
+    // je cache le formulaire
     $('form').addClass('d-none');
 
     var container = $('.container');
     // je créer la div qui contient mon message
-    var div = $('<div>').addClass('row mx-auto col-11 my-3 border bg-light rounded py-2');
-    // je met en forme l'url
-    var url = 'http://localhost'+ app.uri +'/mon-compte';
-    // je créer le lien
-    var a = $('<a>').html('Mon compte.').attr('href', url).addClass('alert-link');
-    // + le texte
-    var text = 'Vous êtes à présent connecté.'
-    text += '<br/>Vous pouvez désormais acceder à votre page : ';
-    var p = $('<p>').html(text);
-    // j'assemble mes balise et ajoute le tout dans le container
-    a.appendTo(p);
-    p.appendTo(div);
+    var div = $('<div>').addClass('row mx-auto col-11 my-3 border bg-light rounded py-2').html('Vous êtes bien connecté. <br/>Vous pouvez désormais jouer aux quizz ! Amusez vous bien.');
+    // j'ajoute la div dans le container
     div.appendTo(container);
 
-    // je change les deux derniers liens de ma navbar (connexion et inscription)
+    // je cache les deux derniers liens de ma navbar (connexion et inscription)
     var allLi = $('ul.nav-pills li');
     $(allLi[1]).addClass('d-none');
     $(allLi[2]).addClass('d-none');
-    var liAccount = '<li class="nav-item">\
-    <a class="nav-link text-blue" href="http://localhost'+ app.uri+'/mon-compte">Mon compte</a>\
-    </li>';
+    // créer le lien déconnexion
     var liDisconnect = '<li class="nav-item">\
     <a class="nav-link text-blue" href="http://localhost'+ app.uri +'/connexion?disconnect=1">Deconnexion</a>\
     </li>';
-    $(liAccount).appendTo($('ul.nav-pills'));
+    // puis l'ajoute au dom
     $(liDisconnect).appendTo($('ul.nav-pills'));
   },
 

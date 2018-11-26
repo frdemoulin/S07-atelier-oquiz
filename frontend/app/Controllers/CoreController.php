@@ -24,7 +24,8 @@ abstract class CoreController
         if(!empty($_GET['disconnect'])) {
             // on détruit la session
             session_unset();
-            $this->oTemplator->setVar('user', '');
+            header('Location: ' . $this->router->generate('signIn'));
+
         }
     }
     // transmet les variables essentiel à templator 

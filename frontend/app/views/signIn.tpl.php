@@ -13,7 +13,7 @@
             <div class="form-group d-flex"> 
                     Pas encore inscrit ? 
                     <a class="text-blue ml-1" href="<?= $this->router->generate('register');?>">S'inscrire.</a>
-                    <a class="text-blue ml-2" href="<?= $this->router->generate('resetPassword');?>">Mot de passe oublié ? </a>
+                    <a class="text-blue ml-2" href="<?= $this->router->generate('lostPassword');?>">Mot de passe oublié ? </a>
             </div>
             <button type="submit" class="btn btn-primary d-block mx-auto mt-auto">Connexion</button>
         </form>

@@ -5,7 +5,6 @@ var app = {
   init: function() {
       app.uri = $('.container').data('uri');
       app.uriBack = $('.container').data('back');
-      console.log(app.uriBack);
       app.recoverQuizList();
       app.recoverTagList();
   },

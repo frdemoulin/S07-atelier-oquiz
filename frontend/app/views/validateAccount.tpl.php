@@ -1,3 +1,3 @@
 <div class="row validate" data-id="<?=$this->var['id'];?>" data-token="<?=$this->var['token'];?>">
-<p class="msg">Page validation de compte</p>
+<p class="msg mx-auto col-11 my-3 border bg-light rounded py-2"></p>
 </div>

@@ -50,7 +50,8 @@ class Application
         $this->router->map('GET', '/connexion', 'MainController#signIn', 'signIn');
         $this->router->map('GET', '/inscription', 'MainController#register', 'register');
         $this->router->map('GET', '/validation', 'MainController#validateAccount', 'validate');
-        $this->router->map('GET', '/mot-de-passe-oublie', 'MainController#resetPassword', 'resetPassword');
+        $this->router->map('GET', '/mot-de-passe-oublie', 'MainController#lostPassword', 'lostPassword');
+        $this->router->map('GET', '/reinitialisation', 'MainController#resetPassword', 'resetPassword');
         $this->router->map('GET', '/mon-compte', 'MainController#account', 'account');
         // QuizController
         $this->router->map('GET', '/quiz/[i:id]', 'QuizController#quiz', 'quiz');

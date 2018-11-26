@@ -9,13 +9,9 @@ var app = {
       app.recoverData();
     },
     recoverData: function() {
-        console.log('verify');
 
         var id = $('.validate').data('id');
         var token = $('.validate').data('token');
-
-        console.log(id);
-        console.log(token);
 
         if (id !== '' && token !== '')
         {
@@ -44,7 +40,7 @@ var app = {
           else 
           {
             // j'affiche le message d'erreur de l'index msg
-            $('p').html(response.msg);
+            $('.msg').html(response.msg).removeClass('bg-light').addClass('bg-warning text-center');
           }
         });
         // Je déclare la méthode fail, celle-ci sera executée si la réponse est insatisfaisante
@@ -54,34 +50,17 @@ var app = {
       },
 
     displaySuccess: function() {
-        // je cible ma div validate
-        var container = $('.validate');
-        // création d'une div qui contiendra le message
-        var div = $('<div>').addClass('row mx-auto col-11 my-3 border bg-light rounded py-2');
-        // assemblage de l'url
-        var url = 'http://localhost'+ app.uri +'/mon-compte';
-        // création du lien de redirection
-        var a = $('<a>').html('Mon compte.').attr('href', url).addClass('alert-link');
-        // message
-        var text = 'Vous êtes bien enregistré. <br/>Vous pouvez désormais acceder à votre page : ';
-        var p = $('<p>').html(text);
-        // ajout des lien et texte dans la div puis dans la div validate
-        a.appendTo(p);
-        p.appendTo(div);
-        div.appendTo(container);
+        $('.msg').html('Vous êtes bien enregistré. <br/>Vous pouvez désormais jouer aux quizz ! Amusez vous bien.');
 
-        // je change les deux derniers liens de ma navbar (connexion et inscription)
+        // je cache les deux derniers liens de ma navbar (connexion et inscription)
         var allLi = $('ul.nav-pills li');
         $(allLi[1]).addClass('d-none');
         $(allLi[2]).addClass('d-none');
-        var liAccount = '<li class="nav-item">\
-        <a class="nav-link text-blue" href="http://localhost'+ app.uri+'/mon-compte">Mon compte</a>\
-        </li>';
+        // créer le lien déconnexion
         var liDisconnect = '<li class="nav-item">\
         <a class="nav-link text-blue" href="http://localhost'+ app.uri +'/connexion?disconnect=1">Deconnexion</a>\
         </li>';
-        // et les ajoutes au dom
-        $(liAccount).appendTo($('ul.nav-pills'));
+        // puis l'ajoute au dom
         $(liDisconnect).appendTo($('ul.nav-pills'));
     },
 }; 

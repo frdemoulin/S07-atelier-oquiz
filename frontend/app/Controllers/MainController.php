@@ -12,6 +12,7 @@ class MainController extends CoreController
     }
 
     public function signIn() {
+        // si déjà connecté je redirige vers page la home
         $this->isAuthorized('alreadyConnect');
 
         $this->oTemplator->setVar('js', 'signIn');
@@ -20,6 +21,7 @@ class MainController extends CoreController
     }
 
     public function register() {
+        // si déjà connecté je redirige vers page la home
         $this->isAuthorized('alreadyConnect');
 
         $this->oTemplator->setVar('js', 'register');
@@ -28,11 +30,12 @@ class MainController extends CoreController
     }
 
     public function account() {
+        // si non connecté je redirige vers page la page de connexion
         $this->isAuthorized('isDisconnect');
+        // si non admin je redirige vers page la home
         $this->isAuthorized('notAdmin');
 
         $this->oTemplator->setVar('js', 'admin');
-
         $this->show('admin');
         
     }
@@ -40,11 +43,10 @@ class MainController extends CoreController
     public function validateAccount() {
         // si déjà connecté je redirige vers page la home
         $this->isAuthorized('alreadyConnect');
-
-        // si get id ou token manquant je redirige vers "s'inscrire"
+        // si get id ou token manquant je redirige vers la page de connexion
         if(empty($_GET['id']) || empty($_GET['token']))
         {
-            $this->isAuthorized('isDisconnect');
+            header('Location: ' . $this->router->generate('signIn'));
         }
         // sinon : 
         $this->oTemplator->setVar('js', 'validateAccount');
@@ -53,8 +55,25 @@ class MainController extends CoreController
         $this->show('validateAccount');
     }
 
-    public function resetPassword() {
+    public function lostPassword() {
+        // si déjà connecté je redirige vers page la home
         $this->isAuthorized('alreadyConnect');
+
+        $this->oTemplator->setVar('js', 'lostPass');
+        $this->show('lostPass');
+    }
+
+    public function resetPassword() {
+        // si déjà connecté je redirige vers page la home
+        $this->isAuthorized('alreadyConnect');
+        // si get id ou token manquant je redirige vers la page de connexion
+        if(empty($_GET['id']) || empty($_GET['token']))
+        {
+            header('Location: ' . $this->router->generate('signIn'));
+        }
+        // sinon : 
+        $this->oTemplator->setVar('id', $_GET['id']);
+        $this->oTemplator->setVar('token', $_GET['token']);
 
         $this->oTemplator->setVar('js', 'resetPass');
         $this->show('resetPass');
