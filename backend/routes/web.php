@@ -127,3 +127,19 @@ $router->get('/logout', [
     'as' => 'logout',
     'uses' => 'UserController@logout'
 ]);
+
+/**
+ * ********************
+ * ROUTES LOST-PASSWORD
+ * ********************
+ */
+
+$router->get('/lost-password', [
+    'as' => 'lost-password',
+    'uses' => 'UserController@lostPassword'
+]);
+
+$router->post('/lost-password', [
+    'as' => 'lost-password',
+    'uses' => 'UserController@lostPassword'
+]);

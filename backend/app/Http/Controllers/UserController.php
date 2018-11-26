@@ -250,7 +250,7 @@ class UserController extends Controller
         $lastname = $request->input('lastname', '');
         //dump($lastname);
         $uri = $request->input('uri', '');
-        //dump($lastname);
+        //dump($uri);
 
         // on supprime les espaces éventuels en début et fin de chaîne
         $email = trim($email);
@@ -336,7 +336,7 @@ class UserController extends Controller
                     */
 
                     // on génère l'url de réinitialisation du mot de passe
-                    // changer l'url avec celle du vpn courant
+                    // on récupère l'uri dynamiquement
                     $link = 'http://localhost' . $uri . '/validation?id='.$newUserId.'&token='.$token;
                     //dd($link);
                     // on envoie le mail de validation à l'aide de la fonction mail(arg1, arg2, arg3, arg4)
@@ -359,6 +359,104 @@ class UserController extends Controller
             }
         }
 
+        $jsonArray = [
+            'success' => $success,
+            'msg' => $msg
+        ];
+
+        // on retourne un json
+        return response()->json($jsonArray);
+    }
+
+    /**
+     * méthode en POST associée au endpoint /lost-password
+     * traite le formulaire de demande de nouveau mot de passe
+     *
+     * @param Request $request
+     * @return json
+     */
+    public function lostPassword(Request $req) {
+
+        $msg = '';
+        $success = false;
+
+        // on récupère la valeur de l'input email et l'uri
+        $email = $req->input('email', '');
+        $uri = $req->input('uri', '');
+        //dump($uri);
+
+        // suppression des espaces
+        $email = trim($email);
+
+        /**
+         * *************************
+         * GESTION INTEGRITE DONNEES
+         * *************************
+         */
+
+        // si l'adresse email est vide
+        if(empty($email)){
+            $msg = 'Veuillez renseigner une adresse e-mail';
+
+            // si l'adresse email est remplie, on vérifie si son format est valide
+            // http://php.net/manual/fr/function.filter-var.php & http://php.net/manual/fr/filter.filters.validate.php
+        } elseif(filter_var($email, FILTER_VALIDATE_EMAIL) === false) { 
+            $msg = 'L\'adresse e-mail saisie est invalide';
+        } else {
+
+            // l'email est valide, on vérifie sa présence en bdd
+            $user = AppUsers::where('email', $email)->get()->first();
+            //dd($user);
+        
+            if(is_null($user)){
+                // l'email n'a pas été trouvée en base
+                $msg = 'L\'adresse e-mail renseignée ne correspond à aucun membre';
+            }
+        }
+
+        // si aucune erreur, alors on peut envoyer un mail de réinitialisation du mot de passe
+
+        if(empty($msg)){
+            $success = true;
+            
+            // on génère un jeton de réinitialisation du mot de passe (chaîne aléatoire de 64 caractères)
+            $token = bin2hex(random_bytes(32));
+            
+            // on insère le token en base
+            $update = AppUsers::where('email', $email)
+                            ->update(['token' => $token]);
+            
+            // on lit les infos du user en base
+            $userInfo = AppUsers::select('id', 'email', 'password', 'firstname', 'lastname')
+            ->where('email', $email)
+            ->get()
+            ->first();
+
+            //dd($userInfo);
+
+            $id = $userInfo->id;
+            $email = $userInfo->email;
+            $firstname = $userInfo->firstname;
+            $lastname = $userInfo->lastname;
+            //dd($firstname);
+
+            // on génère l'url de réinitialisation du mot de passe
+            // on récupère l'uri dynamiquement
+            $link = 'http://localhost' . $uri . '/reinitialisation?id='.$id.'&token='.$token;
+            // on envoie le mail de réinitialisation de mot de passe à l'utilisateur
+            // fonction native mail(arg1, arg2, arg3, arg4)
+            // doc : http://php.net/manual/fr/function.mail.php
+            // arg1 : adresse e-mail
+            $to = $email;
+            // arg2 : sujet de l'e-mail
+            $emailSubject = 'Réinitialisation de votre mot de passe sur oQuiz';
+            // arg3 : contenu de l'e-mail
+            $emailContent = '<html><head></head><body>Bonjour ' . $firstname . ' ' . $lastname. ',<br/>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :<br/> <a href="'.$link.'">Réinitialisation de votre mot de passe</a><br/>Cordialement. L\'équipe d\'administration (team #FC)</body></html>';
+            // arg4 optionnel : headers
+            $headers  = 'MIME-Version: 1.0' . "\r\n";
+            $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+            mail($to, $emailSubject, $emailContent, $headers);
+        }
         $jsonArray = [
             'success' => $success,
             'msg' => $msg
