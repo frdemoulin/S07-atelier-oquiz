@@ -45,7 +45,7 @@ class UserController extends Controller
     public function accountValidation(Request $req){
 
         // on initialise les variables à passer à la view accountvalidation 
-        $errorList = [];
+        $msg = '';
         $success = false;
 
         /*
@@ -67,24 +67,51 @@ class UserController extends Controller
         // on récupère en base les infos de l'user dont l'id est en GET
         $user = AppUsers::where('id', $id)->first();
         
+        //dd($user->token);
+
         // on teste le lien de validation
         if(strcmp($user->id, $id) != 0 || strcmp($user->token, $token) != 0){
-            $errorList[] = 'Le lien de validation de votre compte est invalide. Veuillez en générer un nouveau.';
+            $msg = 'Le lien de validation de votre compte est invalide. Veuillez en générer un nouveau.';
         } else {
             // on active le compte de l'utilisateur en passant son status à 1 et en mettant son token à null
             $userUpdate = AppUsers::where('id', $id)->update([
                 'status' => 1,
                 'token' => NULL
             ]);
+            
+            // on récupère en base les infos de l'user dont l'id est en GET et qui vient d'être mis à jour
+            // afin de les passer en session
+            // on lit en base les infos de l'user dont l'email a été trouvé
+            $userUpdated = AppUsers::select('app_users.id', 'email', 'password', 'firstname', 'lastname', 'roles_id', 'roles.name')
+            ->where('app_users.id', $id)
+            ->join('roles', 'roles.id', 'app_users.roles_id')
+            ->first();
+
+            //dd($userUpdate);
 
             // le procédure de validation du compte est terminée avec succès, on transmet l'info
             $success = true;
+
+            // on stocke en session les infos de l'user
+            $_SESSION['user'] = [
+                'id' => $userUpdated->id,
+                'firstname' => $userUpdated->firstname,
+                'lastname' => $userUpdated->lastname,
+                'role' => [
+                    'id' => $userUpdated->roles_id,
+                    'name' => $userUpdated->name
+                ]
+            ];
+
+            //dd($_SESSION);
         }
 
-        return view('user/accountvalidation', [
-            'errorList' => $errorList,
-            'success' => $success
-        ]);
+        $jsonArray = [
+            'success' => $success,
+            'msg' => $msg
+        ];
+
+        return response()->json($jsonArray);
     }
 
     /**
@@ -321,10 +348,6 @@ class UserController extends Controller
                     
                     $success = true;
                     $msg = '';
-
-                    // on ouvre alors une session
-                    //$_SESSION['userId'] = $user->id;
-                    //exit($success);
                 }
             }
         }
