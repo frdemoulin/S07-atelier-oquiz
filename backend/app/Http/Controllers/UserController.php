@@ -29,6 +29,64 @@ class UserController extends Controller
         //
     }
 
+     /**
+     * méthode en GET associée au endpoint /account-validation
+     * traite le lien de validation du formulaire d'inscription
+     *
+     * @param Request $request
+     * @return view('accountvalidation')
+     */
+
+    /*
+     *************************************************************************************
+     * ETAPE 1 - Récupération des données de la requête HTTP via un objet de type Request
+     *************************************************************************************
+     */
+    public function accountValidation(Request $req){
+
+        // on initialise les variables à passer à la view accountvalidation 
+        $errorList = [];
+        $success = false;
+
+        /*
+        *****************************************
+        * ETAPE 2 - Récupération des param d'URL
+        *****************************************
+        */
+
+        // on passe une valeur vide par défaut en second paramètre si le paramètre attendu n'est pas setté
+        $id = $req->input('id', '');
+        $token = $req->input('token', '');
+
+        /*
+        ***************************************
+        * ETAPE 3 - Test du lien de validation
+        ***************************************
+        */
+
+        // on récupère en base les infos de l'user dont l'id est en GET
+        $user = AppUsers::where('id', $id)->first();
+        
+        // on teste le lien de validation
+        if(strcmp($user->id, $id) != 0 || strcmp($user->token, $token) != 0){
+            $errorList[] = 'Le lien de validation de votre compte est invalide. Veuillez en générer un nouveau.';
+        } else {
+            // on active le compte de l'utilisateur en passant son status à 1 et en mettant son token à null
+            $userUpdate = AppUsers::where('id', $id)->update([
+                'status' => 1,
+                'token' => NULL
+            ]);
+
+            // le procédure de validation du compte est terminée avec succès, on transmet l'info
+            $success = true;
+        }
+
+        return view('user/accountvalidation', [
+            'errorList' => $errorList,
+            'success' => $success
+        ]);
+    }
+
     /**
      * méthode en GET associée au endpoint /signin
      * traite le formulaire de connexion
@@ -141,19 +199,26 @@ class UserController extends Controller
      */
     public function signupPost(Request $request)
     {
+        /*
+        ************************************************
+        * ETAPE 1 - Récupération des valeurs des inputs
+        ************************************************
+        */
+
         // on récupère les infos en POST du form d'inscription
-        $email = $request->input('email');
+        // on passe une valeur vide par défaut en second paramètre si le paramètre attendu n'est pas setté
+        $email = $request->input('email', '');
         //dump($email);
-        $passwordClair = $request->input('password');
+        $passwordClair = $request->input('password', '');
         //dump($passwordClair);
-        $passwordClairConfirm = $request->input('password_confirm');
+        $passwordClairConfirm = $request->input('password_confirm', '');
         //dump($passwordClairConfirm);
-        $firstname = $request->input('firstname');
+        $firstname = $request->input('firstname', '');
         //dump($firstname);
-        $lastname = $request->input('lastname');
+        $lastname = $request->input('lastname', '');
         //dump($lastname);
 
-        // trim des datas du form
+        // on supprime les espaces éventuels en début et fin de chaîne
         $email = trim($email);
         $passwordClair = trim($passwordClair);
         $passwordClairConfirm = trim($passwordClairConfirm);
@@ -161,9 +226,9 @@ class UserController extends Controller
         $lastname = trim($lastname);
 
         /*
-        **************************
-        * CONTROLE INTEGRITE FORM
-        **************************
+        ************************************************
+        * ETAPE 2 - Contrôle d'intégrité des données
+        ************************************************
         */
 
         $msg ='';
@@ -173,7 +238,7 @@ class UserController extends Controller
             $msg = 'Les champs du formulaire ne peuvent pas être vides';
             //exit($msg);
         } else { // Si les champs sont tous remplis
-            //echo 'chp tous remplis';
+            // echo 'chp tous remplis';
             // on cherche en base la présence de l'email donné dans le form de signup
             // count() compte le nombre d'entrées retournées
             $userCount = AppUsers::select('email')
@@ -189,10 +254,8 @@ class UserController extends Controller
                 $msg = 'Adresse email déjà associée à un compte';
                 //exit($msg);
 
-                // sinon on teste si le hash présent en bdd colle avec le password en clair
-                // password_verify($password, $hash) renvoie true si le hash correspond au password
             } else {
-                // $userCount = 0
+                // $userCount = 0, l'email n'a pas été trouvé en base
                 // on compare les deux saisies du password
                 if(strcmp($passwordClair, $passwordClairConfirm) !== 0) {
                     // si les saisies sont différentes, on stocke un message d'erreur
@@ -202,25 +265,25 @@ class UserController extends Controller
                     // les saisies des deux mots de passe sont identiques
                     
                     /*
-                    *******************************
-                    * ENVOI MAIL VALIDATION COMPTE
-                    *******************************
+                    *********************************************
+                    * ETAPE 3 - Enregistrement de l'user en base
+                    *********************************************
                     */
                     
                     // les champs du signup sont valides
-                    // on envoie à l'utilisateur un mail de validation de son compte
+                    // on enregistre alors l'utilisateur en base
 
                     // on génère un jeton de validation (chaîne aléatoire de 64 caractères)
                     $token = bin2hex(random_bytes(32));
                     
-                    // on hache alors le mot de passe
+                    // on hache le mot de passe
                     $passwordHash = password_hash($passwordClair, PASSWORD_DEFAULT);
                     //dd($passwordHash);
 
                     // on insère l'user en base avec un status de 0 (valeur par défaut)
                     // son status passera à 1 une fois l'inscription validée
                     // la méthode insertGetId() insère l'user en base et renvoie son id 
-                    $newUser = AppUsers::insertGetId([
+                    $newUserId = AppUsers::insertGetId([
                         'email' => $email,
                         'password' => $passwordHash,
                         'firstname' => $firstname,
@@ -228,21 +291,29 @@ class UserController extends Controller
                         'token' => $token
                     ]);
                     
-                    dd($newUser);
+                    //dd($newUser);
 
-                    $newUserId = $newUser[0]->id;
+                    //$newUserId = $newUser[0]->id;
+                    
+                    /*
+                    ******************************************************
+                    * ETAPE 4 - Envoi d'un e-mail de validation du compte
+                    ******************************************************
+                    */
 
                     // on génère l'url de réinitialisation du mot de passe
-                    $link = 'http://frederic-demoulin.vpnuser.oclock.io/S07/blog/public/reset-password?id='.$newUserId.'&token='.$token;
+                    // changer l'url avec celle du vpn courant
+                    //$link = 'http://rachel-michel.vpnuser.oclock.io/S07/S07-atelier-oquiz/frontend/public/account-validation?id='.$newUserId.'&token='.$token;
+                    $link = 'http://frederic-demoulin.vpnuser.oclock.io/S07/S07-atelier-oquiz/frontend/public/account-validation?id='.$newUserId.'&token='.$token;
                     // on envoie le mail de réinitialisation de mot de passe à l'utilisateur
                     // fonction native mail(arg1, arg2, arg3, arg4)
                     // doc : http://php.net/manual/fr/function.mail.php
                     // arg1 : adresse e-mail
-                    $to = $user['email'];
+                    $to = $email;
                     // arg2 : sujet de l'e-mail
-                    $emailSubject = 'Réinitialisation de votre mot de passe';
+                    $emailSubject = 'Validation de votre compte oQuiz';
                     // arg3 : contenu de l'e-mail
-                    $emailContent = '<html><head></head><body>Bonjour ' . $user['login'] . ',<br/>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :<br/>' . $link . '</body></html>';
+                    $emailContent = '<html><head></head><body>Bonjour,<br/>Pour valider votre compte sur oQuiz, veuillez cliquer sur le lien ci-dessous :<br/>' . $link . '<br/>Cordialement. L\'équipe d\'administration.</body></html>';
                     // arg4 optionnel : headers
                     $headers  = 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";

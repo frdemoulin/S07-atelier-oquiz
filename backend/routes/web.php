@@ -53,12 +53,14 @@ $router->get('/tags/{id}/quiz', [
 
 /*
 ************************
-* Routes UserController
+* ROUTES UserController
 ************************
 */
 
 /**
- * SIGNUP
+ * ********************
+ * ROUTES SIGNUP
+ * ********************
  */
 
 // route en GET associée au endpoint /signup
@@ -75,8 +77,15 @@ $router->post('/signup', [
     'uses' => 'UserController@signupPost'
 ]);
 
+$router->get('/account-validation', [
+    'as' => 'account-validation',
+    'uses' => 'UserController@accountValidation'
+]);
+
 /**
- * SIGNIN
+ * ********************
+ * ROUTES SIGNIN
+ * ********************
  */
 
 // route en GET associée au endpoint /signin
@@ -94,7 +103,9 @@ $router->get('/signin', [
 // ]);
 
 /**
- * ACCOUNT
+ * ********************
+ * ROUTES ACCOUNT
+ * ********************
  */
 
 // route en GET associée au endpoint /account
@@ -105,7 +116,9 @@ $router->get('/account', [
 ]);
 
 /**
- * LOGOUT
+ * ********************
+ * ROUTES LOGOUT
+ * ********************
  */
 
 // route en GET associée au endpoint /logout
