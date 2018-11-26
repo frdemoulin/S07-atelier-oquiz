@@ -95,6 +95,7 @@ class UserController extends Controller
 
             // le procédure de validation du compte est terminée avec succès, on transmet l'info
             $success = true;
+            $msg = '';
 
             // on stocke en session les infos de l'user
             $_SESSION['user'] = [
