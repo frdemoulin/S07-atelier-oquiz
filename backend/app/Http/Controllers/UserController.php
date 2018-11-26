@@ -244,6 +244,8 @@ class UserController extends Controller
         //dump($firstname);
         $lastname = $request->input('lastname', '');
         //dump($lastname);
+        $uri = $request->input('uri', '');
+        //dump($lastname);
 
         // on supprime les espaces éventuels en début et fin de chaîne
         $email = trim($email);
@@ -330,9 +332,8 @@ class UserController extends Controller
 
                     // on génère l'url de réinitialisation du mot de passe
                     // changer l'url avec celle du vpn courant
-                    //$link = 'http://rachel-michel.vpnuser.oclock.io/S07/S07-atelier-oquiz/frontend/public/account-validation?id='.$newUserId.'&token='.$token;
-                    $link = 'http://frederic-demoulin.vpnuser.oclock.io/S07/S07-atelier-oquiz/frontend/public/account-validation?id='.$newUserId.'&token='.$token;
-                    // on envoie le mail de réinitialisation de mot de passe à l'utilisateur
+                    $link = 'http://localhost' . $uri . 'validation?id='.$newUserId.'&token='.$token;
+                    // on envoie le mail de validation à l'aide de la fonction mail(arg1, arg2, arg3, arg4)
                     // fonction native mail(arg1, arg2, arg3, arg4)
                     // doc : http://php.net/manual/fr/function.mail.php
                     // arg1 : adresse e-mail
@@ -340,7 +341,7 @@ class UserController extends Controller
                     // arg2 : sujet de l'e-mail
                     $emailSubject = 'Validation de votre compte oQuiz';
                     // arg3 : contenu de l'e-mail
-                    $emailContent = '<html><head></head><body>Bonjour,<br/>Pour valider votre compte sur oQuiz, veuillez cliquer sur le lien ci-dessous :<br/>' . $link . '<br/>Cordialement. L\'équipe d\'administration.</body></html>';
+                    $emailContent = '<html><head></head><body>Bonjour,<br/>Pour valider votre compte sur oQuiz, veuillez cliquer sur le lien ci-dessous :<br/> <a href="'.$link.'">Validation de votre compte</a><br/>Cordialement. L\'équipe d\'administration.</body></html>';
                     // arg4 optionnel : headers
                     $headers  = 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
