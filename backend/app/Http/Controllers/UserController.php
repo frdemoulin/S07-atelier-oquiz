@@ -515,14 +515,15 @@ class UserController extends Controller
         
         } else {
             // les mots de passe saisis sont valides et coïncident
-
             $user = AppUsers::where([
                 ['id', $id],
                 ['token', $token]
                 ])->get()->first();
             //dd($user);
-        
-            if(is_null($user)){
+            
+            //dd(is_null($user));
+
+            if(is_null($user) == true){
                 // la correspondance id - token n'a pas été trouvée en base
                 $msg = 'Le lien de réinitialisation du mot de passe n\'est pas valide';
             } else {
