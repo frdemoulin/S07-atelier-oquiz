@@ -485,8 +485,6 @@ class UserController extends Controller
         //dump($id);
         $token = $req->input('token', '');
         //dump($token);
-
-        // on récupère les valeurs des inputs password
         $password = $req->input('password', '');
         $passwordConfirm = $req->input('password_confirm', '');
 
@@ -505,14 +503,14 @@ class UserController extends Controller
 
             $msg = 'Vous devez saisir un mot de passe';
 
-            // si l'adresse email est remplie, on vérifie si son format est valide
+            // si la retape du password est vide
         } elseif(empty($passwordConfirm)) {
             
             $msg = 'Vous devez saisir à nouveau votre mot de passe';
 
-            // sinon on teste la longueur des mots de passe
+            // sinon on compare les saisies des deux mots de passe
         } elseif(strcmp($password, $passwordConfirm) !== 0) {
-            // sinon on compare les deux mots de passe
+            
             $msg = 'Les deux mots de passe doivent être identiques';
         
         } else {

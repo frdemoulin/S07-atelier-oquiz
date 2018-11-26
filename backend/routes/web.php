@@ -143,3 +143,19 @@ $router->post('/lost-password', [
     'as' => 'lost-password',
     'uses' => 'UserController@lostPassword'
 ]);
+
+/**
+ * **********************
+ * ROUTES RESET-PASSWORD
+ * **********************
+ */
+
+$router->get('/reset-password', [
+    'as' => 'reset-password',
+    'uses' => 'UserController@resetPassword'
+]);
+
+$router->post('/reset-password', [
+    'as' => 'reset-password',
+    'uses' => 'UserController@resetPassword'
+]);
