@@ -409,7 +409,7 @@ class UserController extends Controller
             //dd($user);
         
             if(is_null($user)){
-                // l'email n'a pas été trouvée en base
+                // le couple id, token n'a pas été trouvée en base
                 $msg = 'L\'adresse e-mail renseignée ne correspond à aucun membre';
             }
         }
@@ -523,7 +523,7 @@ class UserController extends Controller
             
             //dd(is_null($user));
 
-            if(is_null($user) == true){
+            if(is_null($user)){
                 // la correspondance id - token n'a pas été trouvée en base
                 $msg = 'Le lien de réinitialisation du mot de passe n\'est pas valide';
             } else {
