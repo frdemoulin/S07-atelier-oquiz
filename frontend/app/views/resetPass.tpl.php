@@ -1,4 +1,4 @@
-<div class="row" data-id="<?=$this->var['id'];?>" data-token="<?=$this->var['token'];?>">
+<div class="row reset-pass" data-id="<?=$this->var['id'];?>" data-token="<?=$this->var['token'];?>">
     <main class="col-lg-12 d-flex flex-row ">
         <form class="col-5 mx-auto py-3 border">
             <h3 class="text-center">Réinitialisation du mot de passe</h3>
