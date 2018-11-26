@@ -29,9 +29,6 @@ var app = {
         // et je dis que notEmpty = false;
         if(data[index] == '') 
         {
-          var textError = 'Vous ne pouvez pas laisser le champ '+ index +' vide.';
-          var error = $('<div>').addClass('mx-auto my-2 border text-light bg-danger rounded p-2 error').html(textError);
-          error.appendTo(evt.target);
           notEmpty = false;
         }
       }
@@ -54,6 +51,12 @@ var app = {
                 error.appendTo(evt.target);
             }
         }
+        else 
+        {
+          var textError = 'Vous ne pouvez pas laisser de champ vide.';
+          var emptyError = $('<div>').addClass('mx-auto my-2 border text-light bg-danger rounded p-2 error').html(textError);
+          emptyError.appendTo(evt.target);
+        }
     },
     dataRequest: function(dataValue) {
       var jqxhr = $.ajax({
@@ -65,7 +68,8 @@ var app = {
           firstname:  dataValue['firstname'],
           email: dataValue['email'],
           password: dataValue['password'],
-          password_confirm:  dataValue['password_confirm']
+          password_confirm:  dataValue['password_confirm'],
+          uri: app.uri
         }
       });
       // Je déclare la méthode done, celle-ci sera executée si la réponse est satisfaisante
@@ -90,38 +94,11 @@ var app = {
     },
   
     displaySuccess: function() {
-      // je cache le formulaire
-      $('form').addClass('d-none');
-      // je cible mon container
-      var container = $('.container');
-      // création d'une div qui contiendra le message
-      var div = $('<div>').addClass('row mx-auto col-11 my-3 border bg-light rounded py-2');
-      // assemblage de l'url
-      var url = 'http://localhost'+ app.uri +'/mon-compte';
-      // création du lien de redirection
-      var a = $('<a>').html('Mon compte.').attr('href', url).addClass('alert-link');
-      // message
-      var text = 'Vous êtes à présent connecté.'
-      text += '<br/>Vous pouvez désormais acceder à votre page : ';
-      var p = $('<p>').html(text);
-      // ajout des lien et texte dans la div puis dans le container
-      a.appendTo(p);
-      p.appendTo(div);
-      div.appendTo(container);
-  
-      // je change les deux derniers liens de ma navbar (connexion et inscription)
-      var allLi = $('ul.nav-pills li');
-      $(allLi[1]).addClass('d-none');
-      $(allLi[2]).addClass('d-none');
-      var liAccount = '<li class="nav-item">\
-      <a class="nav-link text-blue" href="http://localhost'+ app.uri+'/mon-compte">Mon compte</a>\
-      </li>';
-      var liDisconnect = '<li class="nav-item">\
-      <a class="nav-link text-blue" href="http://localhost'+ app.uri +'/connexion?disconnect=1">Deconnexion</a>\
-      </li>';
-      // et les ajoutes au dom
-      $(liAccount).appendTo($('ul.nav-pills'));
-      $(liDisconnect).appendTo($('ul.nav-pills'));
+          // j'affiche le message d'erreur en dessous du bouton Connexion
+      var form = $('form');
+      var confirm = $('<div>').addClass('mx-auto my-2 border text-light bg-info rounded p-2 error').html('Vous avez reçu un mail pour confirmer votre compte');
+      
+      confirm.appendTo(form);
     },
   
     displayError: function(msg) {
