@@ -72,7 +72,9 @@ class UserController extends Controller
         // on teste le lien de validation
         if(strcmp($user->id, $id) != 0 || strcmp($user->token, $token) != 0){
             $msg = 'Le lien de validation de votre compte est invalide. Veuillez en générer un nouveau.';
-        } elseif($user->status == 1) {
+        }
+        
+        if($user->status == 1) {
             $msg = 'Votre compte a déjà été activé. Merci de vous connecter';
         } else {
             // on active le compte de l'utilisateur en passant son status à 1 et en mettant son token à null
